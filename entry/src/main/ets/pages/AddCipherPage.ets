@@ -233,7 +233,7 @@ export struct AddCipherPage {
           // 名称
           Text($r('app.string.cipher_item_name'))
             .fontSize(14)
-            .fontColor('#666666')
+            .fontColor($r('app.color.vault_secondary_text'))
             .margin({
               left: 16,
               right: 16,
@@ -250,82 +250,78 @@ export struct AddCipherPage {
 
           if (this.cipherType == CipherItemType.LOGIN) {
             // 用户名
-            Row() {
+            Column({ space: 4 }) {
               Text($r('app.string.cipher_username'))
                 .fontSize(14)
-                .fontColor('#666666')
-                .width(80)
-              TextInput({ text: this.loginUsername })
-                .accessibilityText($r('app.string.cipher_username'))
-                .layoutWeight(1)
-                .margin({ left: 8, right: 8 })
-                .onChange((v: string) => {
-                  this.loginUsername = v;
-                  this.viewModel.loginItem.username = v;
+                .fontWeight(FontWeight.Medium)
+                .fontColor($r('app.color.vault_secondary_text'))
+                .width('100%')
+              Row({ space: 8 }) {
+                TextInput({ text: this.loginUsername })
+                  .accessibilityText($r('app.string.cipher_username'))
+                  .layoutWeight(1)
+                  .onChange((v: string) => {
+                    this.loginUsername = v;
+                    this.viewModel.loginItem.username = v;
+                  })
+                AdaptiveIconButton({
+                  icon: $r('app.media.icon_password'),
+                  accessibilityLabel: $r('app.string.accessibility_generate'),
+                  barWidth: 32,
+                  barHeight: 32,
+                  iconWidth: 20,
+                  iconHeight: 20,
+                  contentPadding: 4,
+                  barBottomMargin: 0,
+                  onButtonClick: () => {
+                    this.genMode = GeneratorPanelMode.USERNAME;
+                    this.showGenSheet = true;
+                  }
                 })
-              AdaptiveIconButton({
-                icon: $r('app.media.icon_password'),
-                accessibilityLabel: $r('app.string.accessibility_generate'),
-                barWidth: 32,
-                barHeight: 32,
-                iconWidth: 20,
-                iconHeight: 20,
-                contentPadding: 4,
-                barBottomMargin: 0,
-                onButtonClick: () => {
-                  this.genMode = GeneratorPanelMode.USERNAME;
-                  this.showGenSheet = true;
-                }
-              })
+              }
+              .width('100%')
             }
-            .margin({
-              left: 16,
-              right: 16,
-              top: 20,
-              bottom: 8
-            })
+            .margin({ left: 16, right: 16, top: 20, bottom: 8 })
 
             // 密码
-            Row() {
+            Column({ space: 4 }) {
               Text($r('app.string.cipher_password'))
                 .fontSize(14)
-                .fontColor('#666666')
-                .width(80)
-              TextInput({ text: this.loginPassword, placeholder: $r('app.string.login_password_placeholder') })
-                .accessibilityText($r('app.string.cipher_password'))
-                .type(InputType.Password)
-                .layoutWeight(1)
-                .margin({ left: 8, right: 8 })
-                .onChange((v: string) => {
-                  this.loginPassword = v;
-                  this.viewModel.loginItem.password = v;
+                .fontWeight(FontWeight.Medium)
+                .fontColor($r('app.color.vault_secondary_text'))
+                .width('100%')
+              Row({ space: 8 }) {
+                TextInput({ text: this.loginPassword, placeholder: $r('app.string.login_password_placeholder') })
+                  .accessibilityText($r('app.string.cipher_password'))
+                  .type(InputType.Password)
+                  .layoutWeight(1)
+                  .onChange((v: string) => {
+                    this.loginPassword = v;
+                    this.viewModel.loginItem.password = v;
+                  })
+                AdaptiveIconButton({
+                  icon: $r('app.media.icon_password'),
+                  accessibilityLabel: $r('app.string.accessibility_generate'),
+                  barWidth: 32,
+                  barHeight: 32,
+                  iconWidth: 20,
+                  iconHeight: 20,
+                  contentPadding: 4,
+                  barBottomMargin: 0,
+                  onButtonClick: () => {
+                    this.genMode = GeneratorPanelMode.PASSWORD;
+                    this.showGenSheet = true;
+                  }
                 })
-              AdaptiveIconButton({
-                icon: $r('app.media.icon_password'),
-                accessibilityLabel: $r('app.string.accessibility_generate'),
-                barWidth: 32,
-                barHeight: 32,
-                iconWidth: 20,
-                iconHeight: 20,
-                contentPadding: 4,
-                barBottomMargin: 0,
-                onButtonClick: () => {
-                  this.genMode = GeneratorPanelMode.PASSWORD;
-                  this.showGenSheet = true;
-                }
-              })
+              }
+              .width('100%')
             }
-            .margin({
-              left: 16,
-              right: 16,
-              top: 20,
-              bottom: 8
-            })
+            .margin({ left: 16, right: 16, top: 20, bottom: 8 })
 
             // 网站
             Text($r('app.string.cipher_website'))
               .fontSize(14)
-              .fontColor('#666666')
+              .fontColor($r('app.color.vault_secondary_text'))
               .margin({
                 left: 16,
                 right: 16,
@@ -350,7 +346,7 @@ export struct AddCipherPage {
             // 称呼
             Text($r('app.string.cipher_identity_title'))
               .fontSize(14)
-              .fontColor('#666666')
+              .fontColor($r('app.color.vault_secondary_text'))
               .margin({
                 left: 16,
                 right: 16,
@@ -371,7 +367,7 @@ export struct AddCipherPage {
             // 名
             Text($r('app.string.cipher_first_name'))
               .fontSize(14)
-              .fontColor('#666666')
+              .fontColor($r('app.color.vault_secondary_text'))
               .margin({
                 left: 16,
                 right: 16,
@@ -387,7 +383,7 @@ export struct AddCipherPage {
             // 中间名
             Text($r('app.string.cipher_middle_name'))
               .fontSize(14)
-              .fontColor('#666666')
+              .fontColor($r('app.color.vault_secondary_text'))
               .margin({
                 left: 16,
                 right: 16,
@@ -403,7 +399,7 @@ export struct AddCipherPage {
             // 姓
             Text($r('app.string.cipher_last_name'))
               .fontSize(14)
-              .fontColor('#666666')
+              .fontColor($r('app.color.vault_secondary_text'))
               .margin({
                 left: 16,
                 right: 16,
@@ -419,7 +415,7 @@ export struct AddCipherPage {
             // 用户名
             Text($r('app.string.cipher_username'))
               .fontSize(14)
-              .fontColor('#666666')
+              .fontColor($r('app.color.vault_secondary_text'))
               .margin({
                 left: 16,
                 right: 16,
@@ -435,7 +431,7 @@ export struct AddCipherPage {
             // 公司
             Text($r('app.string.cipher_company'))
               .fontSize(14)
-              .fontColor('#666666')
+              .fontColor($r('app.color.vault_secondary_text'))
               .margin({
                 left: 16,
                 right: 16,
@@ -451,7 +447,7 @@ export struct AddCipherPage {
             // 社会保障号码
             Text($r('app.string.cipher_ssn'))
               .fontSize(14)
-              .fontColor('#666666')
+              .fontColor($r('app.color.vault_secondary_text'))
               .margin({
                 left: 16,
                 right: 16,
@@ -468,7 +464,7 @@ export struct AddCipherPage {
             // 护照号码
             Text($r('app.string.cipher_passport'))
               .fontSize(14)
-              .fontColor('#666666')
+              .fontColor($r('app.color.vault_secondary_text'))
               .margin({
                 left: 16,
                 right: 16,
@@ -485,7 +481,7 @@ export struct AddCipherPage {
             // 许可证号码
             Text($r('app.string.cipher_license'))
               .fontSize(14)
-              .fontColor('#666666')
+              .fontColor($r('app.color.vault_secondary_text'))
               .margin({
                 left: 16,
                 right: 16,
@@ -501,7 +497,7 @@ export struct AddCipherPage {
             // 电子邮箱
             Text($r('app.string.cipher_email'))
               .fontSize(14)
-              .fontColor('#666666')
+              .fontColor($r('app.color.vault_secondary_text'))
               .margin({
                 left: 16,
                 right: 16,
@@ -517,7 +513,7 @@ export struct AddCipherPage {
             // 电话
             Text($r('app.string.cipher_phone'))
               .fontSize(14)
-              .fontColor('#666666')
+              .fontColor($r('app.color.vault_secondary_text'))
               .margin({
                 left: 16,
                 right: 16,
@@ -533,7 +529,7 @@ export struct AddCipherPage {
             // 地址1
             Text($r('app.string.cipher_address1'))
               .fontSize(14)
-              .fontColor('#666666')
+              .fontColor($r('app.color.vault_secondary_text'))
               .margin({
                 left: 16,
                 right: 16,
@@ -549,7 +545,7 @@ export struct AddCipherPage {
             // 地址2
             Text($r('app.string.cipher_address2'))
               .fontSize(14)
-              .fontColor('#666666')
+              .fontColor($r('app.color.vault_secondary_text'))
               .margin({
                 left: 16,
                 right: 16,
@@ -565,7 +561,7 @@ export struct AddCipherPage {
             // 地址3
             Text($r('app.string.cipher_address3'))
               .fontSize(14)
-              .fontColor('#666666')
+              .fontColor($r('app.color.vault_secondary_text'))
               .margin({
                 left: 16,
                 right: 16,
@@ -581,7 +577,7 @@ export struct AddCipherPage {
             // 市/镇
             Text($r('app.string.cipher_city'))
               .fontSize(14)
-              .fontColor('#666666')
+              .fontColor($r('app.color.vault_secondary_text'))
               .margin({
                 left: 16,
                 right: 16,
@@ -597,7 +593,7 @@ export struct AddCipherPage {
             // 州/省
             Text($r('app.string.cipher_state'))
               .fontSize(14)
-              .fontColor('#666666')
+              .fontColor($r('app.color.vault_secondary_text'))
               .margin({
                 left: 16,
                 right: 16,
@@ -613,7 +609,7 @@ export struct AddCipherPage {
             // 邮政编码
             Text($r('app.string.cipher_postal_code'))
               .fontSize(14)
-              .fontColor('#666666')
+              .fontColor($r('app.color.vault_secondary_text'))
               .margin({
                 left: 16,
                 right: 16,
@@ -629,7 +625,7 @@ export struct AddCipherPage {
             // 国家
             Text($r('app.string.cipher_country'))
               .fontSize(14)
-              .fontColor('#666666')
+              .fontColor($r('app.color.vault_secondary_text'))
               .margin({
                 left: 16,
                 right: 16,
@@ -646,7 +642,7 @@ export struct AddCipherPage {
             // 姓名
             Text($r('app.string.cipher_cardholder'))
               .fontSize(14)
-              .fontColor('#666666')
+              .fontColor($r('app.color.vault_secondary_text'))
               .margin({
                 left: 16,
                 right: 16,
@@ -662,7 +658,7 @@ export struct AddCipherPage {
             // 号码
             Text($r('app.string.cipher_number'))
               .fontSize(14)
-              .fontColor('#666666')
+              .fontColor($r('app.color.vault_secondary_text'))
               .margin({
                 left: 16,
                 right: 16,
@@ -679,7 +675,7 @@ export struct AddCipherPage {
             // 品牌
             Text($r('app.string.cipher_brand'))
               .fontSize(14)
-              .fontColor('#666666')
+              .fontColor($r('app.color.vault_secondary_text'))
               .margin({
                 left: 16,
                 right: 16,
@@ -700,7 +696,7 @@ export struct AddCipherPage {
             // 过期月份
             Text($r('app.string.cipher_exp_month'))
               .fontSize(14)
-              .fontColor('#666666')
+              .fontColor($r('app.color.vault_secondary_text'))
               .margin({
                 left: 16,
                 right: 16,
@@ -722,7 +718,7 @@ export struct AddCipherPage {
             // 过期年份
             Text($r('app.string.cipher_exp_year'))
               .fontSize(14)
-              .fontColor('#666666')
+              .fontColor($r('app.color.vault_secondary_text'))
               .margin({
                 left: 16,
                 right: 16,
@@ -743,7 +739,7 @@ export struct AddCipherPage {
             // 安全码
             Text($r('app.string.cipher_security_code'))
               .fontSize(14)
-              .fontColor('#666666')
+              .fontColor($r('app.color.vault_secondary_text'))
               .margin({
                 left: 16,
                 right: 16,
@@ -762,7 +758,7 @@ export struct AddCipherPage {
           // 备注
           Text($r('app.string.cipher_notes'))
             .fontSize(14)
-            .fontColor('#666666')
+            .fontColor($r('app.color.vault_secondary_text'))
             .margin({
               left: 16,
               right: 16,
