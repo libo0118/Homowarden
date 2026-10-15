@@ -110,7 +110,7 @@ export struct TotpListItem {
           if (this.cipher.login?.username) {
             Text(this.cipher.login.username)
               .fontSize(14)
-              .fontColor('#666666')
+              .fontColor($r('app.color.vault_secondary_text'))
               .maxLines(1)
               .textOverflow({ overflow: TextOverflow.Ellipsis })
               .margin({ top: 4 })
@@ -137,16 +137,19 @@ export struct TotpListItem {
 
         // 状态指示器和剩余时间
         Row() {
-          Circle()
-            .width(8)
-            .height(8)
-            .foregroundColor(this.remainingSeconds > 5 ? Color.Green : Color.Red)
-            .accessibilityLevel('no')
-
-          Text($r('app.string.totp_seconds', this.remainingSeconds))
-            .fontSize(14)
-            .fontColor('#666666')
-            .margin({ left: 4, right: 8 })
+          Stack({ alignContent: Alignment.Center }) {
+            Progress({ value: this.remainingSeconds, total: 30, type: ProgressType.Ring })
+              .width(36)
+              .height(36)
+              .color(this.remainingSeconds > 5 ? $r('app.color.brand_accent_color') : Color.Red)
+            Text(this.remainingSeconds.toString())
+              .fontSize(12)
+              .fontColor($r('app.color.vault_secondary_text'))
+          }
+          .width(36)
+          .height(36)
+          .margin({ right: 8 })
+          .accessibilityText($r('app.string.totp_seconds', this.remainingSeconds))
 
           // 复制按钮
           Column() {
