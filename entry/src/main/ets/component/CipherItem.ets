@@ -143,7 +143,7 @@ export struct CipherItem {
 
           Text(this.getDisplaySubtitle())
             .fontSize(14)
-            .fontColor('#666666')
+            .fontColor($r('app.color.vault_secondary_text'))
             .maxLines(1)
             .textOverflow({ overflow: TextOverflow.Ellipsis })
             .margin({ top: 2 })
@@ -176,9 +176,10 @@ export struct CipherItem {
       })
     }
     .width('100%')
-    .padding(16)
-    .borderRadius(8)
-    .margin({ bottom: 4 })
+    .padding({ left: 16, right: 16, top: 12, bottom: 12 })
+    .backgroundColor($r('app.color.vault_list_background'))
+    .borderWidth({ bottom: 1 })
+    .borderColor($r('app.color.vault_divider_color'))
     .bindContextMenu(this.ContextMenuBuilder, ResponseType.RightClick, {
       backgroundColor: $r('app.color.menu_background_color'),
       backgroundBlurStyle: BlurStyle.NONE
