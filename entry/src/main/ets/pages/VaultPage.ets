@@ -38,7 +38,7 @@ import { TOTPUtil } from '../utils/TOTPUtil';
 import { promptAction } from '@kit.ArkUI';
 import { FormFactorUtil } from '../utils/FormFactorUtil';
 
-const COMPACT_TAB_CONTENT_INSET = 104;
+const COMPACT_TAB_CONTENT_INSET = 0;
 
 @Builder
 export function VaultPageBuilder() {
@@ -1144,16 +1144,7 @@ export struct VaultPage {
       }
       .vertical(false)
       .barMode(BarMode.Fixed)
-      .barOverlap(true)
-      .barFloatingStyle({
-        barBottomMargin: 28,
-        adaptToHandedness: true,
-        thermoCtrl: true,
-        systemMaterialEffect: {
-          materialType: hdsMaterial.MaterialType.ADAPTIVE,
-          materialLevel: hdsMaterial.MaterialLevel.ADAPTIVE
-        }
-      })
+      .barOverlap(false)
       .scrollable(true)
       .onChange((index: number) => {
         this.selectedMainTab = this.getTabByIndex(index);
@@ -1168,7 +1159,7 @@ export struct VaultPage {
           }
           this.vaultAddButton()
         }
-          .margin({ right: 16, bottom: 96 })
+          .margin({ right: 16, bottom: 80 })
       }
     }
     .width('100%')
