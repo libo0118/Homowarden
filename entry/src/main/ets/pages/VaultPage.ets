@@ -346,7 +346,7 @@ struct VaultContent {
   }
 
   @Builder
-  categoryRow(label: ResourceStr, icon: Resource, count: number, type: FilterType) {
+  categoryRow(label: Resource, icon: Resource, count: number, type: FilterType) {
     Column() {
       Row({ space: 12 }) {
         Image(icon).width(24).height(24)
