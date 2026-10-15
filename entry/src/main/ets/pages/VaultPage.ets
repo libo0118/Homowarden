@@ -346,11 +346,59 @@ struct VaultContent {
   }
 
   @Builder
+  categoryRow(label: ResourceStr, icon: Resource, count: number, type: FilterType) {
+    Column() {
+      Row({ space: 12 }) {
+        Image(icon).width(24).height(24)
+        Text(label).fontSize(16).layoutWeight(1)
+        Text(count.toString()).fontSize(14).fontColor($r('app.color.vault_secondary_text'))
+        Text('›').fontSize(20).fontColor($r('app.color.vault_secondary_text'))
+      }
+      .width('100%')
+      .height(56)
+      .padding({ left: 16, right: 16 })
+      Divider().color($r('app.color.vault_divider_color')).margin({ left: 52 })
+    }
+    .width('100%')
+    .accessibilityGroup(true)
+    .accessibilityText(label)
+    .onClick(() => {
+      this.selectedType = type;
+      this.applyCurrentFilter();
+    })
+  }
+
+  @Builder
   listContent() {
     if (this.isLoading) {
       this.loadingContent()
     } else {
       List({ scroller: this.listScroller }) {
+        if (this.selectedType === FilterType.ALL && this.searchText.trim().length === 0) {
+          ListItem() {
+            Text($r('app.string.cipher_type'))
+              .fontSize(12)
+              .fontWeight(FontWeight.Medium)
+              .fontColor($r('app.color.brand_accent_color'))
+              .padding({ left: 16, top: 12, bottom: 4 })
+          }
+          ListItem() {
+            this.categoryRow($r('app.string.vault_type_login'), $r('app.media.icon_cipher_login'),
+              this.viewModel.stats.login, FilterType.LOGINS)
+          }
+          ListItem() {
+            this.categoryRow($r('app.string.vault_type_card'), $r('app.media.icon_cipher_card'),
+              this.viewModel.stats.card, FilterType.CARDS)
+          }
+          ListItem() {
+            this.categoryRow($r('app.string.vault_type_identity'), $r('app.media.icon_cipher_identity'),
+              this.viewModel.stats.identity, FilterType.IDENTITIES)
+          }
+          ListItem() {
+            this.categoryRow($r('app.string.vault_type_note'), $r('app.media.icon_cipher_note'),
+              this.viewModel.stats.note, FilterType.NOTES)
+          }
+        }
         if (this.displayCiphers.length === 0) {
           ListItem() {
             this.emptyContent()
