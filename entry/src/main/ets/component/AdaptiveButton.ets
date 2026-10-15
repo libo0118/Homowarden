@@ -28,14 +28,14 @@ export struct AdaptiveTextButton {
   build() {
     Stack({ alignContent: Alignment.Center }) {
       Button(this.text)
-        .type(ButtonType.Capsule)
+        .type(ButtonType.Normal)
         .backgroundColor(this.translucent ? $r('app.color.secondary_button_background_color') :
           $r('app.color.button_background_color'))
         .fontColor(this.translucent ? this.translucentFontColor : $r('app.color.button_foreground_color'))
         .fontSize(this.fontSize)
         .borderColor(Color.Transparent)
         .borderWidth(0)
-        .borderRadius(this.barHeight / 2)
+        .borderRadius(6)
         .padding(0)
         .width(this.barWidth)
         .height(this.barHeight)
@@ -108,7 +108,7 @@ export struct AdaptiveMenuTextButton {
   build() {
     Stack({ alignContent: Alignment.Center }) {
       Button(this.text)
-        .type(ButtonType.Capsule)
+        .type(ButtonType.Normal)
         .bindMenu(this.menuItems, {
           backgroundColor: $r('app.color.menu_background_color'),
           backgroundBlurStyle: BlurStyle.NONE
@@ -119,7 +119,7 @@ export struct AdaptiveMenuTextButton {
         .fontSize(this.fontSize)
         .borderColor(Color.Transparent)
         .borderWidth(0)
-        .borderRadius(this.barHeight / 2)
+        .borderRadius(6)
         .padding(0)
         .width(this.barWidth)
         .height(this.barHeight)
