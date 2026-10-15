@@ -8,18 +8,23 @@ export struct AdaptiveShell {
   build() {
     Row() {
       this.railBuilder()
-      Divider().vertical(true).width(1).height('100%')
       Column() {
         this.listBuilder()
       }
-      .layoutWeight(1)
+      .width('36%')
       .height('100%')
-      Divider().vertical(true).width(1).height('100%')
+      .backgroundColor($r('app.color.vault_list_background'))
+      Divider()
+        .vertical(true)
+        .width(1)
+        .height('100%')
+        .color($r('app.color.vault_divider_color'))
       Column() {
         this.detailBuilder()
       }
       .layoutWeight(1)
       .height('100%')
+      .backgroundColor($r('app.color.vault_detail_background'))
     }
     .width('100%')
     .height('100%')
