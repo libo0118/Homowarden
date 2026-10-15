@@ -965,6 +965,19 @@ export struct VaultPage {
   }
 
   @Builder
+  private vaultRefreshButton() {
+    AdaptiveIconButton({
+      icon: $r('app.media.icon_restore'),
+      accessibilityLabel: $r('app.string.common_refresh'),
+      iconWidth: 25,
+      iconHeight: 25,
+      contentPadding: 8,
+      barBottomMargin: 0,
+      onButtonClick: () => this.refreshVault()
+    })
+  }
+
+  @Builder
   private vaultAddButton() {
     AdaptiveIconButton({
       icon: $r('app.media.icon_add'),
