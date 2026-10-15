@@ -227,6 +227,22 @@ export struct GeneratorPage {
 
   build() {
     Column() {
+      // 分段切换：密码 / 用户名
+      Column() {
+        SegmentButton({
+          options: this.subTabOptions,
+          selectedIndexes: $activeSubTabIndexes,
+          onItemClicked: async (index: number) => {
+            this.activeSubTabIndexes = [index];
+            await this.regenerate();
+          },
+          enableStateAnimation: true
+        })
+      }
+      .width('100%')
+      .padding({ left: 8, right: 16 })
+      .margin({ top: 12, bottom: 12 })
+
       // 输出行：生成值 + 生成 + 复制
       Row() {
         Text(this.output.length > 0 ? this.output : $r('app.string.generator_empty'))
@@ -265,24 +281,8 @@ export struct GeneratorPage {
       }
       .width('100%')
       .padding(16)
-      .borderRadius(12)
-      .backgroundColor($r('app.color.start_window_background'))
-
-      // 分段切换：密码 / 用户名
-      Column() {
-        SegmentButton({
-          options: this.subTabOptions,
-          selectedIndexes: $activeSubTabIndexes,
-          onItemClicked: async (index: number) => {
-            this.activeSubTabIndexes = [index];
-            await this.regenerate();
-          },
-          enableStateAnimation: true
-        })
-      }
-      .width('100%')
-      .padding({ left: 8, right: 16 })
-      .margin({ top: 12, bottom: 12 })
+      .borderRadius(6)
+      .backgroundColor($r('app.color.vault_list_background'))
 
       // 单一滚动容器承载当前模式的选项，短内容也顶对齐，避免被居中或遮挡
       Scroll() {
@@ -311,7 +311,7 @@ export struct GeneratorPage {
         Row() {
           Text($r('app.string.password_length'))
             .fontSize(14)
-            .fontColor('#666666')
+            .fontColor($r('app.color.vault_secondary_text'))
           Blank()
           Text(`${this.length}`)
             .fontSize(16)
@@ -515,7 +515,7 @@ export struct GeneratorPage {
       Column({ space: 8 }) {
         Text($r('app.string.username_type'))
           .fontSize(14)
-          .fontColor('#666666')
+          .fontColor($r('app.color.vault_secondary_text'))
           .width('100%')
         AppDropdown({
           options: this.usernameTypeOptions,
@@ -533,7 +533,7 @@ export struct GeneratorPage {
         Column({ space: 8 }) {
           Text($r('app.string.username_email'))
             .fontSize(14)
-            .fontColor('#666666')
+            .fontColor($r('app.color.vault_secondary_text'))
             .width('100%')
           TextInput({ text: this.email, placeholder: $r('app.string.username_email_placeholder') })
             .accessibilityText($r('app.string.username_email'))
