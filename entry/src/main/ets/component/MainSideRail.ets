@@ -9,31 +9,28 @@ export struct MainSideRail {
   @Builder
   private navigationItem(tab: MainTab, label: Resource, icon: Resource) {
     Row() {
-      if (this.selectedMainTab === tab) {
-        Divider()
-          .vertical(true)
-          .width(3)
-          .height(40)
-          .color($r('app.color.main_nav_selected'))
-      }
       Column({ space: 4 }) {
         Image(icon)
           .width(24)
           .height(24)
-          .fillColor(this.selectedMainTab === tab ?
-            $r('app.color.main_nav_selected') : $r('app.color.main_nav_unselected'))
+          .fillColor($r('app.color.main_rail_icon_color'))
         Text(label)
           .fontSize(12)
-          .fontColor(this.selectedMainTab === tab ?
-            $r('app.color.main_nav_selected') : $r('app.color.main_nav_unselected'))
+          .fontWeight(this.selectedMainTab === tab ? FontWeight.Medium : FontWeight.Regular)
+          .fontColor($r('app.color.main_rail_icon_color'))
           .maxLines(1)
           .textOverflow({ overflow: TextOverflow.Ellipsis })
       }
-      .layoutWeight(1)
+      .width('100%')
       .justifyContent(FlexAlign.Center)
+      .opacity(this.selectedMainTab === tab ? 1 : 0.8)
     }
-    .width('100%')
-    .layoutWeight(1)
+    .width(96)
+    .height(64)
+    .backgroundColor(this.selectedMainTab === tab ?
+      $r('app.color.main_rail_selected_background') : Color.Transparent)
+    .borderRadius(6)
+    .margin({ left: 8, right: 8, top: 4, bottom: 4 })
     .accessibilityGroup(true)
     .accessibilityText(label)
     .onClick(() => this.onSelect(tab))
@@ -45,8 +42,9 @@ export struct MainSideRail {
         this.navigationItem(item.tab, item.label, item.icon)
       }, (item: MainNavigationItem) => item.tab.toString())
     }
-    .width(80)
+    .width(112)
     .height('100%')
+    .padding({ top: 8 })
     .backgroundColor($r('app.color.main_nav_background'))
   }
 }
