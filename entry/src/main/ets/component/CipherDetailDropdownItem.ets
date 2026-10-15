@@ -26,33 +26,28 @@ export struct CipherDetailDropdownItem {
   }
 
   build() {
-    Row() {
+    Column({ space: 4 }) {
       Text(this.label)
         .fontSize(14)
-        .fontColor('#666666')
-        .width(112)
+        .fontWeight(FontWeight.Medium)
+        .fontColor($r('app.color.vault_secondary_text'))
+        .width('100%')
 
       if (this.isEditable) {
-        // 编辑模式：显示下拉菜单
-        Row() {
-          AppDropdown({
-            options: this.dropdownOptions,
-            value: this.selectedValue,
-            accessibilityLabel: this.label,
-            onChange: (value: number) => {
-              if (this.onValueChange) {
-                this.onValueChange(value);
-              }
+        AppDropdown({
+          options: this.dropdownOptions,
+          value: this.selectedValue,
+          accessibilityLabel: this.label,
+          onChange: (value: number) => {
+            if (this.onValueChange) {
+              this.onValueChange(value);
             }
-          })
-        }
-        .layoutWeight(1)
-        .margin({ left: 16, right: 16 })
+          }
+        })
       } else {
-        // 非编辑模式：显示文本
         Text(this.content)
           .fontSize(14)
-          .layoutWeight(1)
+          .width('100%')
       }
     }
     .width('100%')
