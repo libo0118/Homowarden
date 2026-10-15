@@ -7,7 +7,6 @@ import { common } from '@kit.AbilityKit';
 import { DataPreferences } from '@abner/datastore';
 import { HdsNavDestination } from '@hms.hds.hdsBaseComponent';
 import { WindowPrivacyUtil } from '../utils/WindowPrivacyUtil';
-import { AdaptiveTextButton } from '../component/AdaptiveButton';
 import { FormDialog } from '../component/FormDialog';
 import { TwoFactorProvider } from '../model/AccessToken';
 import { AppText, AppTextKey } from '../localization/AppText';
@@ -311,6 +310,12 @@ export struct LoginPage {
     HdsNavDestination() {
       Column() {
         Column() {
+        Text('Homowarden')
+          .fontSize(26)
+          .fontWeight(FontWeight.Bold)
+          .fontColor($r('app.color.brand_accent_color'))
+          .margin({ bottom: 16 })
+
         // 邮箱输入框
         TextInput({
           placeholder: $r('app.string.login_email_placeholder'),
@@ -393,20 +398,18 @@ export struct LoginPage {
           .margin(12)
         }
 
-        Column() {
-          // 登录和加载状态复用同一半透明按钮，避免提交期间出现样式跳变
-          AdaptiveTextButton({
-            text: this.isLoading ? $r('app.string.login_in_progress') : $r('app.string.login_action'),
-            barWidth: 150,
-            barHeight: 50,
-            fontSize: 18,
-            translucent: true,
-            buttonEnabled: !this.isLoading,
-            onButtonClick: () => {
-              this.handleLogin();
-            }
+        Button(this.isLoading ? $r('app.string.login_in_progress') : $r('app.string.login_action'))
+          .type(ButtonType.Normal)
+          .width('100%')
+          .height(44)
+          .fontSize(16)
+          .fontColor($r('app.color.button_foreground_color'))
+          .backgroundColor($r('app.color.button_background_color'))
+          .borderRadius(6)
+          .enabled(!this.isLoading)
+          .onClick(() => {
+            this.handleLogin();
           })
-        }
 
         // 显示错误信息
         if (this.viewModel.errorMessage) {
@@ -428,13 +431,20 @@ export struct LoginPage {
         }
 
         }
-        .width(this.isPc ? '60%' : '100%')
-        .constraintSize({ maxWidth: 640 })
+        .width('100%')
+        .constraintSize({ maxWidth: 440 })
+        .padding({ left: 24, right: 24, top: 28, bottom: 28 })
+        .backgroundColor($r('app.color.vault_list_background'))
+        .borderRadius(8)
+        .borderWidth(1)
+        .borderColor($r('app.color.vault_divider_color'))
       }
       .width('100%')
       .height('100%')
       .padding(24)
       .alignItems(HorizontalAlign.Center)
+      .justifyContent(FlexAlign.Center)
+      .backgroundColor($r('app.color.start_window_background'))
     }
     .titleBar({
       content: {
@@ -444,6 +454,7 @@ export struct LoginPage {
       },
       enableComponentSafeArea: true
     })
+    .hideTitleBar(this.isPc)
     .hideBackButton(true)
     .onReady((ctx: NavDestinationContext) => {
       this.pathInfos = ctx.pathStack;
