@@ -2,11 +2,11 @@
   "color": [
     {
       "name": "start_window_background",
-      "value": "#FFFFFF"
+      "value": "#F3F6F9"
     },
     {
       "name": "button_background_color",
-      "value": "#2777DA"
+      "value": "#175DDC"
     },
     {
       "name": "button_foreground_color",
@@ -14,11 +14,11 @@
     },
     {
       "name": "secondary_button_background_color",
-      "value": "#E5E5EA"
+      "value": "#F3F6F9"
     },
     {
       "name": "secondary_button_foreground_color",
-      "value": "#1F2329"
+      "value": "#0C3276"
     },
     {
       "name": "translucent_button_background",
@@ -30,31 +30,55 @@
     },
     {
       "name": "brand_accent_color",
-      "value": "#2777DA"
+      "value": "#175DDC"
     },
     {
       "name": "menu_background_color",
-      "value": "#E6FFFFFF"
+      "value": "#FFFFFF"
     },
     {
       "name": "main_nav_background",
-      "value": "#F7F7FA"
+      "value": "#175DDC"
     },
     {
       "name": "main_nav_selected",
-      "value": "#2777DA"
+      "value": "#175DDC"
     },
     {
       "name": "main_nav_unselected",
-      "value": "#666A73"
+      "value": "#667085"
     },
     {
       "name": "main_nav_disabled",
-      "value": "#A9ADB7"
+      "value": "#99A7B5"
     },
     {
       "name": "main_nav_add_icon",
       "value": "#FFFFFF"
+    },
+    {
+      "name": "main_rail_selected_background",
+      "value": "#0C3276"
+    },
+    {
+      "name": "main_rail_icon_color",
+      "value": "#FFFFFF"
+    },
+    {
+      "name": "vault_list_background",
+      "value": "#FFFFFF"
+    },
+    {
+      "name": "vault_detail_background",
+      "value": "#F3F6F9"
+    },
+    {
+      "name": "vault_divider_color",
+      "value": "#D8E2EB"
+    },
+    {
+      "name": "vault_secondary_text",
+      "value": "#667085"
     }
   ]
 }
