@@ -8,6 +8,8 @@ import { Logger } from '@nzy/logger';
 import { AppToast } from '../utils/AppToast';
 import { ShareDatabaseUtil } from '../utils/ShareDatabaseUtil';
 import { AdaptiveMenuTextButton, AdaptivePasteButton, AdaptiveTextButton } from '../component/AdaptiveButton';
+import { HdsNavDestination, hdsMaterial } from '@kit.UIDesignKit';
+import { DetailRouter } from '../utils/DetailRouter';
 
 @Component
 export struct Sure2SharePage {
@@ -98,21 +100,21 @@ export struct Sure2SharePage {
             .margin({
               left: "5%",
               right: "5%",
-              bottom: "10%"
+              bottom: 16
             })
           // 输入标题
           Text($r('app.string.share_input_title'))
-            .fontSize(24)
+            .fontSize(16)
             .fontWeight(FontWeight.Bold)
             .align(Alignment.Start)
-            .width('90%')
+            .width('100%')
 
           // 输入文本框
           TextArea({ text: this.inputText })
             .accessibilityText($r('app.string.share_input_title'))
             .id('beforeLink')
             .height('20%')
-            .width('90%')
+            .width('100%')
             .margin({ top: 12, bottom: 12 })
             .onChange((value: string) => {
               this.inputText = value;
@@ -160,17 +162,17 @@ export struct Sure2SharePage {
           // 输出标题
           Text($r('app.string.share_output_title'))
             .id('afterLink')
-            .fontSize(24)
+            .fontSize(16)
             .fontWeight(FontWeight.Bold)
             .align(Alignment.Start)
-            .width('90%')
-            .margin({ top: 40 })
+            .width('100%')
+            .margin({ top: 24 })
 
           // 输出文本框
           TextArea({ text: this.outputText })
             .accessibilityText($r('app.string.share_output_title'))
             .height('20%')
-            .width('90%')
+            .width('100%')
             .margin({ top: 12, bottom: 12 })
             .focusable(false)
 
@@ -235,5 +237,38 @@ export struct Sure2SharePage {
     .scrollable(ScrollDirection.Vertical)
     .width('100%')
     .height('100%')
+  }
+}
+@Builder
+export function ShareToolsPageBuilder() {
+  ShareToolsPage();
+}
+
+@Component
+struct ShareToolsPage {
+  @StorageLink('activeSplitView') isSplitView: boolean = false;
+
+  build() {
+    HdsNavDestination() {
+      Sure2SharePage()
+    }
+    .titleBar({
+      content: { title: { mainTitle: $r('app.string.nav_share') } },
+      enableComponentSafeArea: true,
+      style: {
+        systemMaterialEffect: {
+          materialType: hdsMaterial.MaterialType.ADAPTIVE,
+          materialLevel: hdsMaterial.MaterialLevel.ADAPTIVE
+        }
+      }
+    })
+    .hideBackButton(this.isSplitView)
+    .onBackPressed((): boolean => {
+      if (this.isSplitView) {
+        DetailRouter.closeDetail();
+        return true;
+      }
+      return false;
+    })
   }
 }
