@@ -47,7 +47,7 @@ export function VaultPageBuilder() {
 
 class QuickActionMenuButton implements promptAction.Button {
   text: string;
-  color: string = '#2777DA';
+  color: string = '#175DDC';
 
   constructor(text: string) {
     this.text = text;
@@ -384,7 +384,6 @@ struct VaultContent {
       }
       .width('100%')
       .height('100%')
-      .padding({ left: 16, right: 16 })
       .contentEndOffset(this.bottomContentInset)
       .edgeEffect(EdgeEffect.None)
     }
@@ -451,6 +450,7 @@ struct VaultContent {
       }
       .width('100%')
       .height('100%')
+      .backgroundColor($r('app.color.vault_list_background'))
     }
 
   private navigateToDetail(cipher: Cipher): void {
@@ -965,19 +965,6 @@ export struct VaultPage {
   }
 
   @Builder
-  private vaultRefreshButton() {
-    AdaptiveIconButton({
-      icon: $r('app.media.icon_restore'),
-      accessibilityLabel: $r('app.string.common_refresh'),
-      iconWidth: 25,
-      iconHeight: 25,
-      contentPadding: 8,
-      barBottomMargin: 0,
-      onButtonClick: () => this.refreshVault()
-    })
-  }
-
-  @Builder
   private vaultAddButton() {
     AdaptiveIconButton({
       icon: $r('app.media.icon_add'),
@@ -1009,8 +996,8 @@ export struct VaultPage {
   private splitListPane() {
     Stack({ alignContent: Alignment.BottomEnd }) {
       Column() {
-        Row() {
-          Text(this.getTitle()).fontSize(24).fontWeight(FontWeight.Medium).layoutWeight(1)
+        Row({ space: 8 }) {
+          Text(this.getTitle()).fontSize(20).fontWeight(FontWeight.Medium).layoutWeight(1)
           if (this.selectedMainTab === MainTab.SHARE || this.selectedMainTab === MainTab.GENERATOR) {
             Image($r('app.media.icon_history'))
               .width(24)
@@ -1022,9 +1009,29 @@ export struct VaultPage {
                 this.openDetail(name);
               })
           }
+          if (this.selectedMainTab === MainTab.VAULT && this.sharedSymmetricKey.length > 0) {
+            if (this.isPc) {
+              Button() {
+                Image($r('app.media.icon_restore')).width(18).height(18)
+              }
+              .width(36).height(36)
+              .buttonStyle(ButtonStyleMode.TEXTUAL)
+              .accessibilityText($r('app.string.common_refresh'))
+              .onClick(() => this.refreshVault())
+            }
+            Button($r('app.string.cipher_add_title'))
+              .type(ButtonType.Normal)
+              .height(36)
+              .fontSize(14)
+              .fontColor($r('app.color.button_foreground_color'))
+              .backgroundColor($r('app.color.button_background_color'))
+              .borderRadius(6)
+              .onClick(() => this.addCipher())
+          }
         }
         .height(56)
         .padding({ left: 16, right: 16 })
+        .backgroundColor($r('app.color.vault_list_background'))
 
         Column() {
           if (this.selectedMainTab === MainTab.VAULT) {
@@ -1049,15 +1056,6 @@ export struct VaultPage {
       .width('100%')
       .height('100%')
 
-      if (this.selectedMainTab === MainTab.VAULT && this.sharedSymmetricKey.length > 0) {
-        Column() {
-          if (this.isPc) {
-            this.vaultRefreshButton()
-          }
-          this.vaultAddButton()
-        }
-        .margin({ right: 8, bottom: 8 })
-      }
     }
     .width('100%')
     .height('100%')
