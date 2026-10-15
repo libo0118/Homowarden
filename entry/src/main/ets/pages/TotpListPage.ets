@@ -154,7 +154,7 @@ export struct TotpListPage {
         Column() {
           Text($r('app.string.common_loading'))
             .fontSize(16)
-            .fontColor('#666666')
+            .fontColor($r('app.color.vault_secondary_text'))
         }
         .width('100%')
         .height('100%')
@@ -164,11 +164,11 @@ export struct TotpListPage {
           Image($r('app.media.icon_key'))
             .width(80)
             .height(80)
-            .fillColor('#CCCCCC')
+            .fillColor($r('app.color.vault_divider_color'))
             .margin({ bottom: 16 })
           Text($r('app.string.totp_empty'))
             .fontSize(16)
-            .fontColor('#999999')
+            .fontColor($r('app.color.vault_secondary_text'))
             .textAlign(TextAlign.Center)
         }
         .width('100%')
