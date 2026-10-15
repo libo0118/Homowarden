@@ -28,30 +28,61 @@ export struct CipherDetailTextItem {
   onValueChange?: (value: string) => void;
 
   build() {
-    Row() {
+    Column({ space: 4 }) {
       Text(this.label)
         .fontSize(14)
-        .fontColor('#666666')
-        .width(112)
+        .fontWeight(FontWeight.Medium)
+        .fontColor($r('app.color.vault_secondary_text'))
+        .width('100%')
 
-      if (this.isEditable) {
-        TextInput({ text: this.content })
-          .accessibilityText(this.getAccessibilityLabel())
-          .fontSize(14)
-          .layoutWeight(1)
-          .margin({ left: 16, right: 16 })
-          .onChange((value: string) => {
-            if (this.onValueChange) {
-              this.onValueChange(value);
+      Row() {
+        if (this.isEditable) {
+          TextInput({ text: this.content })
+            .accessibilityText(this.getAccessibilityLabel())
+            .fontSize(14)
+            .layoutWeight(1)
+            .margin({ right: 8 })
+            .height(44)
+            .backgroundColor($r('app.color.vault_detail_background'))
+            .borderWidth(1)
+            .borderColor($r('app.color.vault_divider_color'))
+            .borderRadius(6)
+            .onChange((value: string) => {
+              if (this.onValueChange) {
+                this.onValueChange(value);
+              }
+            })
+            .type((this.showHideButton ? InputType.Password : InputType.Normal) |
+              (this.isNumberOnly ? InputType.Number : InputType.Normal))
+          if (this.isUri) {
+            Column() {
+              AdaptiveIconButton({
+                icon: $r('app.media.icon_cancel'),
+                accessibilityLabel: $r('app.string.accessibility_clear'),
+                barWidth: 40,
+                barHeight: 40,
+                iconWidth: 20,
+                iconHeight: 20,
+                contentPadding: 6,
+                barBottomMargin: 0,
+                onButtonClick: () => {
+                  this.doClearUri();
+                }
+              })
             }
-          })
-          .type((this.showHideButton ? InputType.Password : InputType.Normal) |
-            (this.isNumberOnly ? InputType.Number : InputType.Normal))
-        if (this.isUri) {
-          Column() {
+
+          }
+        } else {
+          Text(this.content ? (this.showContent ? this.content : this.placeholder) : '')
+            .fontSize(14)
+            .layoutWeight(1)
+        }
+
+        if (this.showHideButton && !this.isEditable && this.content) {
+          if (this.showContent) {
             AdaptiveIconButton({
-              icon: $r('app.media.icon_cancel'),
-              accessibilityLabel: $r('app.string.accessibility_clear'),
+              icon: $r('app.media.icon_show'),
+              accessibilityLabel: $r('app.string.accessibility_hide'),
               barWidth: 40,
               barHeight: 40,
               iconWidth: 20,
@@ -59,23 +90,30 @@ export struct CipherDetailTextItem {
               contentPadding: 6,
               barBottomMargin: 0,
               onButtonClick: () => {
-                this.doClearUri();
+                this.showContent = false;
+              }
+            })
+          } else {
+            AdaptiveIconButton({
+              icon: $r('app.media.icon_hide'),
+              accessibilityLabel: $r('app.string.accessibility_show'),
+              barWidth: 40,
+              barHeight: 40,
+              iconWidth: 20,
+              iconHeight: 20,
+              contentPadding: 6,
+              barBottomMargin: 0,
+              onButtonClick: () => {
+                this.showContent = true;
               }
             })
           }
-
         }
-      } else {
-        Text(this.content ? (this.showContent ? this.content : this.placeholder) : '')
-          .fontSize(14)
-          .layoutWeight(1)
-      }
 
-      if (this.showHideButton && !this.isEditable && this.content) {
-        if (this.showContent) {
+        if (this.showCopyButton && !this.isEditable && this.content) {
           AdaptiveIconButton({
-            icon: $r('app.media.icon_show'),
-            accessibilityLabel: $r('app.string.accessibility_hide'),
+            icon: $r('app.media.icon_copy'),
+            accessibilityLabel: $r('app.string.common_copy'),
             barWidth: 40,
             barHeight: 40,
             iconWidth: 20,
@@ -83,13 +121,15 @@ export struct CipherDetailTextItem {
             contentPadding: 6,
             barBottomMargin: 0,
             onButtonClick: () => {
-              this.showContent = false;
+              this.copyText(this.content);
             }
           })
-        } else {
+        }
+
+        if (this.isUri && !this.isEditable) {
           AdaptiveIconButton({
-            icon: $r('app.media.icon_hide'),
-            accessibilityLabel: $r('app.string.accessibility_show'),
+            icon: $r('app.media.icon_jump'),
+            accessibilityLabel: $r('app.string.accessibility_open_website'),
             barWidth: 40,
             barHeight: 40,
             iconWidth: 20,
@@ -97,43 +137,12 @@ export struct CipherDetailTextItem {
             contentPadding: 6,
             barBottomMargin: 0,
             onButtonClick: () => {
-              this.showContent = true;
+              this.doUriJump();
             }
           })
         }
       }
-
-      if (this.showCopyButton && !this.isEditable && this.content) {
-        AdaptiveIconButton({
-          icon: $r('app.media.icon_copy'),
-          accessibilityLabel: $r('app.string.common_copy'),
-          barWidth: 40,
-          barHeight: 40,
-          iconWidth: 20,
-          iconHeight: 20,
-          contentPadding: 6,
-          barBottomMargin: 0,
-          onButtonClick: () => {
-            this.copyText(this.content);
-          }
-        })
-      }
-
-      if (this.isUri && !this.isEditable) {
-        AdaptiveIconButton({
-          icon: $r('app.media.icon_jump'),
-          accessibilityLabel: $r('app.string.accessibility_open_website'),
-          barWidth: 40,
-          barHeight: 40,
-          iconWidth: 20,
-          iconHeight: 20,
-          contentPadding: 6,
-          barBottomMargin: 0,
-          onButtonClick: () => {
-            this.doUriJump();
-          }
-        })
-      }
+      .width('100%')
     }
     .width('100%')
     .padding({ top: 8, bottom: 8 })
