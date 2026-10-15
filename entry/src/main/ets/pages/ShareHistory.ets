@@ -308,7 +308,7 @@ struct History {
           Column() {
             Text($r('app.string.share_history_empty'))
               .fontSize(16)
-              .fontColor('#999999')
+              .fontColor($r('app.color.vault_secondary_text'))
           }
           .width('100%')
           .layoutWeight(1)
@@ -390,7 +390,7 @@ struct History {
       Column({ space: 6 }) {
         Text(HistoryTimeFormatter.format(item.timestamp))
           .fontSize(12)
-          .fontColor('#999999')
+          .fontColor($r('app.color.vault_secondary_text'))
 
         Text(item.content)
           .fontSize(16)
