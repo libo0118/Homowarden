@@ -23,7 +23,7 @@ export struct MainSideRail {
       }
       .width('100%')
       .justifyContent(FlexAlign.Center)
-      .opacity(this.selectedMainTab === tab ? 1 : 0.8)
+      .opacity(this.selectedMainTab === tab ? 1 : 0.9)
     }
     .width(96)
     .height(64)
