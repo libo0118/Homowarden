@@ -26,6 +26,11 @@
       "buildFunction": "UnlockPageBuilder"
     },
     {
+      "name": "ShareToolsPage",
+      "pageSourceFile": "src/main/ets/pages/Sure2Share.ets",
+      "buildFunction": "ShareToolsPageBuilder"
+    },
+    {
       "name": "ShareHistoryPage",
       "pageSourceFile": "src/main/ets/pages/ShareHistory.ets",
       "buildFunction": "HistoryPageBuilder"
