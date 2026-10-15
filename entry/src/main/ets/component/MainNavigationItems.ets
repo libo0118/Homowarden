@@ -1,10 +1,9 @@
-/** 主页面悬浮底栏和宽屏侧栏共用的固定页签 */
+/** 主页面底栏和宽屏侧栏共用的固定页签 */
 export enum MainTab {
   VAULT = 0,
   TOTP = 1,
   GENERATOR = 2,
-  SHARE = 3,
-  SETTINGS = 4
+  SETTINGS = 3
 }
 
 export interface MainNavigationItem {
@@ -13,13 +12,12 @@ export interface MainNavigationItem {
   icon: Resource;
 }
 
-/** 集中创建导航资源，避免悬浮底栏和侧栏分别维护标签与图标 */
+/** 集中创建导航资源，避免底栏和侧栏分别维护标签与图标 */
 export function mainNavigationItems(): MainNavigationItem[] {
   return [
     { tab: MainTab.VAULT, label: $r('app.string.nav_vault'), icon: $r('app.media.icon_home') },
     { tab: MainTab.TOTP, label: $r('app.string.nav_totp'), icon: $r('app.media.icon_key') },
     { tab: MainTab.GENERATOR, label: $r('app.string.nav_generator'), icon: $r('app.media.icon_password') },
-    { tab: MainTab.SHARE, label: $r('app.string.nav_share'), icon: $r('app.media.icon_nav_share') },
     { tab: MainTab.SETTINGS, label: $r('app.string.nav_settings'), icon: $r('app.media.icon_settings') }
   ];
 }
