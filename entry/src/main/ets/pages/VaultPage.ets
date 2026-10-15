@@ -19,7 +19,6 @@ import { WindowPrivacyUtil } from '../utils/WindowPrivacyUtil';
 import { VaultChangeNotifier, VaultLocalChange, VaultLocalChangeType } from '../utils/VaultChangeNotifier';
 import { MainNavigationItem, mainNavigationItems, MainTab } from '../component/MainNavigationItems';
 import { TotpListPage } from './TotpListPage';
-import { Sure2SharePage } from './Sure2Share';
 import { SettingsPage } from './SettingsPage';
 import { GeneratorPage } from './GeneratorPage';
 import { AppText, AppTextKey } from '../localization/AppText';
@@ -723,7 +722,7 @@ struct VaultContent {
   }
 }
 
-/** 承载密码库、TOTP、分享与设置页签的主页面 */
+/** 承载密码库、TOTP、生成器与设置页签的主页面 */
 @Component
 export struct VaultPage {
   @StorageLink('localeRevision') localeRevision: number = 0;
@@ -752,15 +751,6 @@ export struct VaultPage {
   aboutToDisappear(): void {
     DetailRouter.unregisterCloseHandler(this.closeDetailHandler);
   }
-  historyBtn: HdsNavigationBadgeIconOptions = {
-    content: {
-      label: $r('app.string.common_history'),
-      icon: $r('app.media.icon_history'),
-      action: () => {
-        this.openDetail(EntryRouter.ShareHistoryPage);
-      }
-    }
-  };
   generatorHistoryBtn: HdsNavigationBadgeIconOptions = {
     content: {
       label: $r('app.string.common_history'),
@@ -777,9 +767,6 @@ export struct VaultPage {
     }
     if (this.selectedMainTab === MainTab.GENERATOR) {
       return $r('app.string.generator_title');
-    }
-    if (this.selectedMainTab === MainTab.SHARE) {
-      return $r('app.string.nav_share');
     }
     if (this.selectedMainTab === MainTab.SETTINGS) {
       return $r('app.string.nav_settings');
@@ -813,9 +800,6 @@ export struct VaultPage {
     if (index === MainTab.GENERATOR) {
       return MainTab.GENERATOR;
     }
-    if (index === MainTab.SHARE) {
-      return MainTab.SHARE;
-    }
     if (index === MainTab.SETTINGS) {
       return MainTab.SETTINGS;
     }
@@ -823,9 +807,6 @@ export struct VaultPage {
   }
 
   private getTitleMenu(): HdsNavigationBadgeIconOptions[] {
-    if (this.selectedMainTab === MainTab.SHARE) {
-      return [this.historyBtn];
-    }
     if (this.selectedMainTab === MainTab.GENERATOR) {
       return [this.generatorHistoryBtn];
     }
@@ -933,7 +914,8 @@ export struct VaultPage {
 
   private isDetailPath(name: string): boolean {
     return name === EntryRouter.CipherDetailPage || name === EntryRouter.AddCipherPage ||
-      name === EntryRouter.ShareHistoryPage || name === EntryRouter.GeneratorHistoryPage;
+      name === EntryRouter.ShareToolsPage || name === EntryRouter.ShareHistoryPage ||
+      name === EntryRouter.GeneratorHistoryPage;
   }
 
   private lockVault(): void {
@@ -1011,15 +993,13 @@ export struct VaultPage {
       Column() {
         Row({ space: 8 }) {
           Text(this.getTitle()).fontSize(20).fontWeight(FontWeight.Medium).layoutWeight(1)
-          if (this.selectedMainTab === MainTab.SHARE || this.selectedMainTab === MainTab.GENERATOR) {
+          if (this.selectedMainTab === MainTab.GENERATOR) {
             Image($r('app.media.icon_history'))
               .width(24)
               .height(24)
               .accessibilityText($r('app.string.common_history'))
               .onClick(() => {
-                const name = this.selectedMainTab === MainTab.SHARE ?
-                  EntryRouter.ShareHistoryPage : EntryRouter.GeneratorHistoryPage;
-                this.openDetail(name);
+                this.openDetail(EntryRouter.GeneratorHistoryPage);
               })
           }
           if (this.selectedMainTab === MainTab.VAULT && this.sharedSymmetricKey.length > 0) {
@@ -1053,13 +1033,13 @@ export struct VaultPage {
             this.totpContent(0)
           } else if (this.selectedMainTab === MainTab.GENERATOR) {
             GeneratorPage({ bottomContentInset: 0 })
-          } else if (this.selectedMainTab === MainTab.SHARE) {
-            Sure2SharePage()
           } else {
             SettingsPage({
               isActive: true,
               onLockVault: () => this.lockVault(),
-              onLogout: () => this.logout()
+              onLogout: () => this.logout(),
+              onOpenShare: () => this.openDetail(EntryRouter.ShareToolsPage),
+              onOpenShareHistory: () => this.openDetail(EntryRouter.ShareHistoryPage)
             })
           }
         }
@@ -1125,10 +1105,6 @@ export struct VaultPage {
         }
         .tabBar(this.tabBarStyle(MainTab.GENERATOR, 'main_tab_generator'))
         TabContent() {
-          Sure2SharePage({ bottomContentInset: COMPACT_TAB_CONTENT_INSET })
-        }
-        .tabBar(this.tabBarStyle(MainTab.SHARE, 'main_tab_share'))
-        TabContent() {
           SettingsPage({
             bottomContentInset: COMPACT_TAB_CONTENT_INSET,
             isActive: this.selectedMainTab === MainTab.SETTINGS,
@@ -1137,7 +1113,9 @@ export struct VaultPage {
             },
             onLogout: () => {
               this.logout();
-            }
+            },
+            onOpenShare: () => this.openDetail(EntryRouter.ShareToolsPage),
+            onOpenShareHistory: () => this.openDetail(EntryRouter.ShareHistoryPage)
           })
         }
         .tabBar(this.tabBarStyle(MainTab.SETTINGS, 'main_tab_settings'))
