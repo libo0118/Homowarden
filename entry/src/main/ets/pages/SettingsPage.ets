@@ -41,6 +41,8 @@ export struct SettingsPage {
   @State syncEnabled: boolean = true;
   onLockVault: () => void = () => {};
   onLogout: () => void = () => {};
+  onOpenShare: () => void = () => {};
+  onOpenShareHistory: () => void = () => {};
   @State versionName: string = '1.0.0';
   @State serverAddressText: string = '';
   email: string = '';
@@ -159,7 +161,7 @@ export struct SettingsPage {
 
               Text($r('app.string.settings_biometrics_desc'))
                 .fontSize(12)
-                .fontColor('#666666')
+                .fontColor($r('app.color.vault_secondary_text'))
                 .alignSelf(ItemAlign.Start)
 
               Row() {
@@ -185,7 +187,7 @@ export struct SettingsPage {
 
               Text($r('app.string.settings_auto_lock_desc'))
                 .fontSize(12)
-                .fontColor('#666666')
+                .fontColor($r('app.color.vault_secondary_text'))
                 .alignSelf(ItemAlign.Start)
 
               Row() {
@@ -211,7 +213,7 @@ export struct SettingsPage {
 
               Text($r('app.string.settings_block_capture_desc'))
                 .fontSize(12)
-                .fontColor('#666666')
+                .fontColor($r('app.color.vault_secondary_text'))
                 .alignSelf(ItemAlign.Start)
 
               if (!this.isPc) {
@@ -245,7 +247,7 @@ export struct SettingsPage {
 
                 Text($r('app.string.settings_anti_peep_desc'))
                   .fontSize(12)
-                  .fontColor('#666666')
+                  .fontColor($r('app.color.vault_secondary_text'))
                   .alignSelf(ItemAlign.Start)
               }
             }
@@ -268,7 +270,7 @@ export struct SettingsPage {
 
                 Text(this.email)
                   .fontSize(16)
-                  .fontColor('#666666')
+                  .fontColor($r('app.color.vault_secondary_text'))
               }
               .width('100%')
               .padding({ top: 12, bottom: 12 })
@@ -281,12 +283,34 @@ export struct SettingsPage {
 
                 Text(this.serverAddressText)
                   .fontSize(16)
-                  .fontColor('#666666')
+                  .fontColor($r('app.color.vault_secondary_text'))
                   .maxLines(1)
                   .textOverflow({ overflow: TextOverflow.Ellipsis })
               }
               .width('100%')
               .padding({ top: 4, bottom: 12 })
+
+              Row({ space: 12 }) {
+                Image($r('app.media.icon_nav_share')).width(20).height(20)
+                Text($r('app.string.nav_share')).fontSize(16)
+                Blank()
+                Text('›').fontSize(22).fontColor($r('app.color.vault_secondary_text'))
+              }
+              .width('100%')
+              .padding({ top: 12, bottom: 12 })
+              .accessibilityText($r('app.string.nav_share'))
+              .onClick(() => this.onOpenShare())
+
+              Row({ space: 12 }) {
+                Image($r('app.media.icon_history')).width(20).height(20)
+                Text($r('app.string.share_history_title')).fontSize(16)
+                Blank()
+                Text('›').fontSize(22).fontColor($r('app.color.vault_secondary_text'))
+              }
+              .width('100%')
+              .padding({ top: 12, bottom: 12 })
+              .accessibilityText($r('app.string.share_history_title'))
+              .onClick(() => this.onOpenShareHistory())
 
               Column() {
                 AdaptiveTextButton({
@@ -304,7 +328,7 @@ export struct SettingsPage {
 
                 Text($r('app.string.settings_logout_warning'))
                   .fontSize(12)
-                  .fontColor('#666666')
+                  .fontColor($r('app.color.vault_secondary_text'))
 
                 AdaptiveTextButton({
                   text: $r('app.string.unlock_logout'),
@@ -340,7 +364,7 @@ export struct SettingsPage {
 
                 Text(this.versionName)
                   .fontSize(16)
-                  .fontColor('#666666')
+                  .fontColor($r('app.color.vault_secondary_text'))
               }
               .width('100%')
               .padding({ top: 12, bottom: 12 })
