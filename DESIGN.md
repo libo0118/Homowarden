@@ -36,6 +36,8 @@ The interface uses 39 icon resource names in matching light and dark variants (7
 
 These Homowarden resources are included under the project's MIT license. They replace the previous Material icon geometry and do not incorporate Bitwarden-owned vector paths, logos, or wordmarks. Application branding and tray artwork are maintained separately.
 
+Application branding is designed in the separate OpenDesign project `homowarden-app-icon-fresh-20261016`: an H-shaped arch mark on a blue launcher background, with matching light and dark small icons. The existing layered launcher and small-icon resource names remain in use. Static image and package checks do not establish launcher masking, startup appearance, or device-level rendering; those checks remain pending on HarmonyOS hardware.
+
 Icons contain visible filled paths with `fill-rule="evenodd"` for counters. Avoid transparent canvas paths, icon fonts, masks, filters, and external assets: native HarmonyOS tinting previously exposed a transparent canvas as a solid square. `scripts/check-svg-icons.py` checks transparent canvas hazards and light/dark pairing. Resource compilation confirms that the SVGs are accepted, but even-odd counters and tint rendering still require device-level verification.
 
 Keep search, filter, copy, edit, vault locking, error states, and accessibility labels intact. Do not reuse Bitwarden logos or wordmarks. The unsigned HAP build validates ArkTS compilation; it does not establish pixel-level parity on a device.
