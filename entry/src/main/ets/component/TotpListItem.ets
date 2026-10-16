@@ -13,6 +13,8 @@ export struct TotpListItem {
   @Prop cipher: Cipher;
   @Prop firstInGroup: boolean = false;
   @Prop lastInGroup: boolean = false;
+  @Prop @Watch('handleWebsiteIconChanged') websiteIconUrl: string = '';
+  @State websiteIconFailed: boolean = false;
   @State currentCode: string = '--- ---';
   @State remainingSeconds: number = 30;
   @Prop currentTime: number = Date.now(); // 从父组件接收时间变化
@@ -27,6 +29,10 @@ export struct TotpListItem {
 
   aboutToDisappear() {
     this.stopTimer();
+  }
+
+  private handleWebsiteIconChanged(): void {
+    this.websiteIconFailed = false;
   }
 
   /**
@@ -101,12 +107,27 @@ export struct TotpListItem {
     Stack({ alignContent: Alignment.Bottom }) {
       Row() {
         Row() {
-          Image($r('app.media.icon_cipher_login'))
-            .width(24)
-            .height(24)
-            .objectFit(ImageFit.Contain)
-            .margin({ right: 16 })
-            .accessibilityLevel('no')
+          Stack() {
+            if (this.websiteIconUrl && !this.websiteIconFailed) {
+              Image(this.websiteIconUrl)
+                .alt($r('app.media.icon_cipher_login'))
+                .width(24)
+                .height(24)
+                .objectFit(ImageFit.Contain)
+                .onError(() => { this.websiteIconFailed = true; })
+                .accessibilityLevel('no')
+            } else {
+              Image($r('app.media.icon_cipher_login'))
+                .width(24)
+                .height(24)
+                .objectFit(ImageFit.Contain)
+                .accessibilityLevel('no')
+            }
+          }
+          .width(24)
+          .height(24)
+          .margin({ right: 16 })
+          .accessibilityLevel('no')
 
           Column() {
             Text(this.cipher.name)

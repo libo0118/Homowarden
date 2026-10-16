@@ -28,6 +28,7 @@ import { AppOptionFactory } from '../localization/AppOptionFactory';
 import { AutoLockUtil } from '../utils/AutoLockUtil';
 import { FormFactorUtil } from '../utils/FormFactorUtil';
 import { LogExportDialog } from '../component/LogExportDialog';
+import { WebsiteIconUtil } from '../utils/WebsiteIconUtil';
 
 @Component
 export struct SettingsPage {
@@ -40,6 +41,7 @@ export struct SettingsPage {
   @State antiPeepProtectionEnabled: boolean = false;
   @State syncEnabled: boolean = true;
   @StorageLink('mobileSettingsPanel') settingsPanel: number = 0;
+  @StorageLink('websiteIconsEnabled') websiteIconsEnabled: boolean = WebsiteIconUtil.isEnabled();
   onLockVault: () => void = () => {};
   onLogout: () => void = () => {};
   onOpenShare: () => void = () => {};
@@ -103,6 +105,7 @@ export struct SettingsPage {
     void this.loadAntiPeepProtectionStatus();
     this.loadServerAddress();
     this.getEmail();
+    this.websiteIconsEnabled = WebsiteIconUtil.isEnabled();
   }
 
   getEmail() {
@@ -305,6 +308,8 @@ export struct SettingsPage {
         this.antiPeepProtectionEnabled, (isOn: boolean) => {
           void this.setAntiPeepProtectionEnabled(isOn);
         })
+      this.settingsToggleCard($r('app.string.settings_website_icons'), $r('app.string.settings_website_icons_desc'),
+        this.websiteIconsEnabled, (isOn: boolean) => this.setWebsiteIconsEnabled(isOn))
     }
     .width('100%')
   }
@@ -484,6 +489,23 @@ export struct SettingsPage {
               .padding({ top: 20, bottom: 4 })
 
               Text($r('app.string.settings_block_capture_desc'))
+                .fontSize(12)
+                .fontColor($r('app.color.vault_secondary_text'))
+                .alignSelf(ItemAlign.Start)
+
+              Row() {
+                Text($r('app.string.settings_website_icons'))
+                  .fontSize(16)
+                Blank()
+                Toggle({ type: ToggleType.Switch, isOn: this.websiteIconsEnabled })
+                  .selectedColor($r('app.color.brand_accent_color'))
+                  .accessibilityText($r('app.string.settings_website_icons'))
+                  .onChange((isOn: boolean) => this.setWebsiteIconsEnabled(isOn))
+              }
+              .width('100%')
+              .padding({ top: 20, bottom: 4 })
+
+              Text($r('app.string.settings_website_icons_desc'))
                 .fontSize(12)
                 .fontColor($r('app.color.vault_secondary_text'))
                 .alignSelf(ItemAlign.Start)
@@ -718,6 +740,14 @@ export struct SettingsPage {
       this.startBiometricAuth();
     } else {
       this.updateBiometricAuthStatus(false);
+    }
+  }
+
+  private setWebsiteIconsEnabled(isOn: boolean): void {
+    try {
+      WebsiteIconUtil.setEnabled(isOn);
+    } catch (_) {
+      AppToast.show(this.getUIContext(), $r('app.string.error_save_failed'));
     }
   }
 

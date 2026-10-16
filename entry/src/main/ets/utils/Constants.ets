@@ -71,6 +71,8 @@ export const SAVE_EMAIL = 'save_email';
 
 export const BIOMETRIC_AUTH = 'biometric_auth';
 
+export const WEBSITE_ICONS = 'website_icons';
+
 export const NEED_RELOAD_CIPHERS = 'need_reload_ciphers';
 
 export const AUTO_LOCK_TIMEOUT = 'auto_lock';

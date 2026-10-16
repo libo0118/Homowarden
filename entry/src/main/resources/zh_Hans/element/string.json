@@ -1021,6 +1021,14 @@
       "value": "开启后，可以使用锁屏密码、指纹或人脸解锁密码库"
     },
     {
+      "name": "settings_website_icons",
+      "value": "显示网站图标"
+    },
+    {
+      "name": "settings_website_icons_desc",
+      "value": "向当前服务器的图标服务发送公开网站域名以加载验证码图标。不会发送账号、密码或完整网址，关闭后停止新请求。"
+    },
+    {
       "name": "settings_auto_lock",
       "value": "自动锁定"
     },

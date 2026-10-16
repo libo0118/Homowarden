@@ -1,5 +1,5 @@
 import { Logger } from '@nzy/logger';
-import { Cipher, CipherLogin } from '../model/CipherModels';
+import { Cipher, CipherLogin, CipherUri } from '../model/CipherModels';
 import { PreloginResponse } from '../model/Prelogin';
 import { queryAssetSync } from '../utils/AssetUtil';
 import { CipherItemType, DBTableName, EMAIL_KEY, KDF_PARAM_KEY, MASTER_KEY } from '../utils/Constants';
@@ -7,6 +7,7 @@ import { CryptoUtil } from '../utils/CryptoUtil';
 import { DatabaseUtil } from '../utils/DatabaseUtil';
 import { AppText, AppTextKey } from '../localization/AppText';
 import { relationalStore } from '@kit.ArkData';
+import { getPublicWebsiteHostname } from '../utils/WebsiteIconUtil';
 
 /**
  * 解密包含 TOTP 的登录项，并在查看详情前重新验证主密码
@@ -19,6 +20,7 @@ export class TotpListViewModel {
   symmetricKey: string = '';
   // 错误信息
   errorMessage: AppText | undefined = undefined;
+  websiteIconHosts: Map<string, string> = new Map();
 
   /**
    * 解密配置了 TOTP 的登录项，完成后仅暴露带有 TOTP 的条目
@@ -31,8 +33,9 @@ export class TotpListViewModel {
    * 3) 仅对确有 TOTP 密文的少量登录项并发解密；单条失败不阻塞其余项
    */
   async loadLogins(): Promise<void> {
+    this.websiteIconHosts.clear();
     const loginRows: relationalStore.ValuesBucket[] =
-      DatabaseUtil.getInstance().queryAllRowsSync(DBTableName.LOGINS, ['cipher_id', 'username', 'totp']);
+      DatabaseUtil.getInstance().queryAllRowsSync(DBTableName.LOGINS, ['cipher_id', 'username', 'totp', 'uris']);
     const loginRowByCipherId: Map<string, relationalStore.ValuesBucket> = new Map();
     for (const row of loginRows) {
       const cipherIdRaw = row.cipher_id;
@@ -75,6 +78,10 @@ export class TotpListViewModel {
         cipher.login = {
           username: username, totp: totp, password: null, passwordRevisionDate: null, uris: []
         };
+        const hostname = await this.decryptWebsiteHostname(row.uris as string, cipherKey);
+        if (hostname) {
+          this.websiteIconHosts.set(cipher.id, hostname);
+        }
       } catch (err) {
         Logger.error(`Failed to load login for cipher: ${err}`);
         cipher.login = emptyLogin;
@@ -82,6 +89,34 @@ export class TotpListViewModel {
     }));
 
     this.filteredCiphers = loginCiphers.filter(cipher => !!cipher.login?.totp);
+  }
+
+  private async decryptWebsiteHostname(serializedUris: string, cipherKey: string): Promise<string> {
+    if (!serializedUris) {
+      return '';
+    }
+    try {
+      const uris = JSON.parse(serializedUris) as CipherUri[];
+      if (!Array.isArray(uris)) {
+        return '';
+      }
+      for (const item of uris) {
+        if (!item || typeof item.uri !== 'string' || !item.uri) {
+          continue;
+        }
+        try {
+          const hostname = getPublicWebsiteHostname(await CryptoUtil.decryptField(item.uri, cipherKey));
+          if (hostname) {
+            return hostname;
+          }
+        } catch (_) {
+          // A malformed URI only changes its icon, never the available verification code.
+        }
+      }
+    } catch (_) {
+      return '';
+    }
+    return '';
   }
 
   /**

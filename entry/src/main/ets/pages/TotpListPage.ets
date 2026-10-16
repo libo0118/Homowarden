@@ -4,10 +4,12 @@ import { TotpListViewModel } from '../viewmodel/TotpListViewModel';
 import { AppText, AppTextKey } from '../localization/AppText';
 import { AppTextResolver } from '../localization/AppTextResolver';
 import { FormDialog } from '../component/FormDialog';
+import { buildWebsiteIconUrl, WebsiteIconUtil } from '../utils/WebsiteIconUtil';
 
 /** 从密码库共享数据中筛选并展示 TOTP 条目的页签内容 */
 @Component
 export struct TotpListPage {
+  @StorageLink('websiteIconsEnabled') websiteIconsEnabled: boolean = WebsiteIconUtil.isEnabled();
   @Prop bottomContentInset: number = 0;
   @Prop ciphers: Cipher[] = [];
   @Prop symmetricKey: string = '';
@@ -23,6 +25,7 @@ export struct TotpListPage {
   @State passwordError: ResourceStr = '';
   @State pendingCipher: Cipher | null = null;
   @State searchText: string = '';
+  @State iconBaseUrl: string = '';
   private timerId: number = -1;
   private loadedRevision: number = -1;
   private passwordDialogController: CustomDialogController = new CustomDialogController({
@@ -78,11 +81,23 @@ export struct TotpListPage {
   }
 
   private async activate(): Promise<void> {
+    this.websiteIconsEnabled = WebsiteIconUtil.isEnabled();
+    void this.refreshWebsiteIconBase();
     // 仅在密码库数据修订变化时重新解密，普通页签切换只恢复计时器
     if (this.loadedRevision !== this.dataRevision) {
       await this.reloadCiphers();
     }
     this.startTimer();
+  }
+
+  private async refreshWebsiteIconBase(): Promise<void> {
+    this.iconBaseUrl = '';
+    if (this.websiteIconsEnabled) {
+      const baseUrl = await WebsiteIconUtil.getIconBaseUrl();
+      if (this.isActive && WebsiteIconUtil.isEnabled()) {
+        this.iconBaseUrl = baseUrl;
+      }
+    }
   }
 
   private async reloadCiphers(): Promise<void> {
@@ -208,6 +223,8 @@ export struct TotpListPage {
               ListItem() {
                 TotpListItem({
                   cipher: cipher,
+                  websiteIconUrl: this.isActive && this.websiteIconsEnabled ?
+                    buildWebsiteIconUrl(this.iconBaseUrl, this.viewModel.websiteIconHosts.get(cipher.id) ?? '') : '',
                   firstInGroup: index === 0,
                   lastInGroup: index === this.visibleCiphers().length - 1,
                   currentTime: this.currentTime,
