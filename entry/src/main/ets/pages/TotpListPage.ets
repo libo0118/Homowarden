@@ -13,6 +13,8 @@ export struct TotpListPage {
   @Prop symmetricKey: string = '';
   @Prop @Watch('handleActiveChanged') isActive: boolean = false;
   @Prop @Watch('handleDataRevisionChanged') dataRevision: number = 0;
+  @Prop showSearchBar: boolean = false;
+  @Prop @Watch('handleSearchReset') searchResetRevision: number = 0;
   onNavigateToDetail: (params: CipherDetailParams) => void = () => {};
   @State viewModel: TotpListViewModel = new TotpListViewModel();
   @State currentTime: number = Date.now();
@@ -20,6 +22,7 @@ export struct TotpListPage {
   @State passwordInput: string = '';
   @State passwordError: ResourceStr = '';
   @State pendingCipher: Cipher | null = null;
+  @State searchText: string = '';
   private timerId: number = -1;
   private loadedRevision: number = -1;
   private passwordDialogController: CustomDialogController = new CustomDialogController({
@@ -59,6 +62,19 @@ export struct TotpListPage {
     if (this.isActive) {
       void this.activate();
     }
+  }
+
+  private handleSearchReset(): void {
+    this.searchText = '';
+  }
+
+  private visibleCiphers(): Cipher[] {
+    const query = this.searchText.trim().toLowerCase();
+    if (!query) {
+      return this.viewModel.filteredCiphers;
+    }
+    return this.viewModel.filteredCiphers.filter((cipher: Cipher) =>
+      cipher.name.toLowerCase().includes(query) || (cipher.login?.username ?? '').toLowerCase().includes(query));
   }
 
   private async activate(): Promise<void> {
@@ -150,6 +166,12 @@ export struct TotpListPage {
 
   build() {
     Column() {
+      if (this.showSearchBar) {
+        Search({ value: this.searchText, placeholder: $r('app.string.vault_search_placeholder') })
+          .height(48)
+          .onChange((value: string) => { this.searchText = value; })
+          .margin({ left: 16, right: 16, bottom: 8 })
+      }
       if (this.isLoading) {
         Column() {
           Text($r('app.string.common_loading'))
@@ -159,34 +181,43 @@ export struct TotpListPage {
         .width('100%')
         .height('100%')
         .justifyContent(FlexAlign.Center)
-      } else if (this.viewModel.filteredCiphers.length === 0) {
-        Column() {
-          Image($r('app.media.icon_key'))
-            .width(80)
-            .height(80)
-            .fillColor($r('app.color.vault_divider_color'))
-            .margin({ bottom: 16 })
-          Text($r('app.string.totp_empty'))
-            .fontSize(16)
-            .fontColor($r('app.color.vault_secondary_text'))
-            .textAlign(TextAlign.Center)
-        }
-        .width('100%')
-        .height('100%')
-        .justifyContent(FlexAlign.Center)
       } else {
-        List({ space: 8 }) {
-          ForEach(this.viewModel.filteredCiphers, (cipher: Cipher) => {
+        List({ space: 0 }) {
+          ListItem() {
+            Text($r('app.string.totp_items_count', this.visibleCiphers().length))
+              .fontSize(12)
+              .lineHeight(16)
+              .fontWeight(FontWeight.Bold)
+              .fontColor($r('app.color.vault_secondary_text'))
+              .width('100%')
+              .padding({ top: 12, bottom: 8 })
+          }
+          if (this.visibleCiphers().length === 0) {
             ListItem() {
-              TotpListItem({
-                cipher: cipher,
-                currentTime: this.currentTime,
-                onTap: () => {
-                  this.navigateToDetail(cipher);
-                }
-              })
+              Text($r('app.string.totp_empty'))
+                .fontSize(14)
+                .lineHeight(20)
+                .fontColor($r('app.color.vault_secondary_text'))
+                .width('100%')
+                .padding(16)
+                .backgroundColor($r('app.color.vault_list_background'))
+                .borderRadius(8)
             }
-          })
+          } else {
+            ForEach(this.visibleCiphers(), (cipher: Cipher, index: number) => {
+              ListItem() {
+                TotpListItem({
+                  cipher: cipher,
+                  firstInGroup: index === 0,
+                  lastInGroup: index === this.visibleCiphers().length - 1,
+                  currentTime: this.currentTime,
+                  onTap: () => {
+                    this.navigateToDetail(cipher);
+                  }
+                })
+              }
+            })
+          }
         }
         .width('100%')
         .height('100%')
@@ -197,6 +228,7 @@ export struct TotpListPage {
     }
     .width('100%')
     .height('100%')
+    .backgroundColor($r('app.color.start_window_background'))
   }
 
   private async verifyMasterPassword(): Promise<boolean> {

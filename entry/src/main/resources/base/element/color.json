@@ -79,6 +79,10 @@
     {
       "name": "vault_secondary_text",
       "value": "#5A6D91"
+    },
+    {
+      "name": "settings_icon_color",
+      "value": "#5A6D91"
     }
   ]
 }

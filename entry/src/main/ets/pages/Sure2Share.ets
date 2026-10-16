@@ -92,20 +92,17 @@ export struct Sure2SharePage {
 
   build() {
     Scroll() {
-      Column() {
-          Text($r('app.string.share_help'))
-            .alignRules({
-              middle: { anchor: '__container__', align: HorizontalAlign.Center }
-            })
-            .margin({
-              left: "5%",
-              right: "5%",
-              bottom: 16
-            })
-          // 输入标题
+      Column({ space: 16 }) {
+        Text($r('app.string.share_help'))
+          .fontSize(13)
+          .fontColor($r('app.color.vault_secondary_text'))
+          .lineHeight(20)
+          .width('100%')
+        // 输入标题
+        Column() {
           Text($r('app.string.share_input_title'))
-            .fontSize(16)
-            .fontWeight(FontWeight.Bold)
+            .fontSize(12)
+            .fontColor($r('app.color.vault_secondary_text'))
             .align(Alignment.Start)
             .width('100%')
 
@@ -113,19 +110,22 @@ export struct Sure2SharePage {
           TextArea({ text: this.inputText })
             .accessibilityText($r('app.string.share_input_title'))
             .id('beforeLink')
-            .height('20%')
+            .height(144)
             .width('100%')
-            .margin({ top: 12, bottom: 12 })
+            .fontSize(16)
+            .fontColor($r('sys.color.font_primary'))
+            .backgroundColor($r('app.color.menu_background_color'))
+            .padding({ top: 8, bottom: 8 })
             .onChange((value: string) => {
               this.inputText = value;
             })
 
-          Row({ space: 0 }) {
+          Row({ space: 8 }) {
             AdaptivePasteButton({
-              barWidth: 144,
-              barHeight: 50,
-              fontSize: 16,
-              contentPadding: 6,
+              barWidth: 120,
+              barHeight: 60,
+              fontSize: 15,
+              contentPadding: 0,
               barBottomMargin: 0,
               translucent: true,
               onPaste: (text: string) => {
@@ -139,12 +139,12 @@ export struct Sure2SharePage {
 
             AdaptiveTextButton({
               text: $r('app.string.share_convert'),
-              barWidth: 144,
-              barHeight: 50,
-              fontSize: 16,
-              contentPadding: 6,
+              barWidth: 120,
+              barHeight: 60,
+              fontSize: 15,
+              contentPadding: 0,
               barBottomMargin: 0,
-              translucent: true,
+              translucent: false,
               onButtonClick: () => {
                 try {
                   inputMethod.getController().stopInputSession();
@@ -158,31 +158,40 @@ export struct Sure2SharePage {
           }
           .width('100%')
           .justifyContent(FlexAlign.Center)
+          .padding({ bottom: 12 })
+        }
+        .width('100%')
+        .padding({ left: 16, right: 16, top: 12 })
+        .backgroundColor($r('app.color.menu_background_color'))
+        .borderRadius(16)
 
-          // 输出标题
+        // 输出标题
+        Column() {
           Text($r('app.string.share_output_title'))
             .id('afterLink')
-            .fontSize(16)
-            .fontWeight(FontWeight.Bold)
+            .fontSize(12)
+            .fontColor($r('app.color.vault_secondary_text'))
             .align(Alignment.Start)
             .width('100%')
-            .margin({ top: 24 })
 
           // 输出文本框
           TextArea({ text: this.outputText })
             .accessibilityText($r('app.string.share_output_title'))
-            .height('20%')
+            .height(144)
             .width('100%')
-            .margin({ top: 12, bottom: 12 })
+            .fontSize(16)
+            .fontColor($r('sys.color.font_primary'))
+            .backgroundColor($r('app.color.menu_background_color'))
+            .padding({ top: 8, bottom: 8 })
             .focusable(false)
 
-          Row({ space: 0 }) {
+          Row({ space: 8 }) {
             AdaptiveMenuTextButton({
               text: $r('app.string.common_copy'),
-              barWidth: 144,
-              barHeight: 50,
-              fontSize: 16,
-              contentPadding: 6,
+              barWidth: 120,
+              barHeight: 60,
+              fontSize: 15,
+              contentPadding: 0,
               barBottomMargin: 0,
               translucent: true,
               menuItems: [
@@ -204,10 +213,10 @@ export struct Sure2SharePage {
 
             AdaptiveMenuTextButton({
               text: $r('app.string.common_share'),
-              barWidth: 144,
-              barHeight: 50,
-              fontSize: 16,
-              contentPadding: 6,
+              barWidth: 120,
+              barHeight: 60,
+              fontSize: 15,
+              contentPadding: 0,
               barBottomMargin: 0,
               translucent: true,
               menuItems: [
@@ -229,14 +238,21 @@ export struct Sure2SharePage {
           }
           .width('100%')
           .justifyContent(FlexAlign.Center)
+          .padding({ bottom: 12 })
+        }
+        .width('100%')
+        .padding({ left: 16, right: 16, top: 12 })
+        .backgroundColor($r('app.color.menu_background_color'))
+        .borderRadius(16)
       }
-      .padding({ left: 20, right: 20, top: 20, bottom: 20 + this.bottomContentInset })
+      .padding({ left: 16, right: 16, top: 12, bottom: 16 + this.bottomContentInset })
       .width('100%')
     }
     .scrollBar(BarState.Auto)
     .scrollable(ScrollDirection.Vertical)
     .width('100%')
     .height('100%')
+    .backgroundColor($r('app.color.start_window_background'))
   }
 }
 @Builder

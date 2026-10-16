@@ -3,7 +3,6 @@ import { Cipher } from '../model/CipherModels';
 import { TOTPUtil } from '../utils/TOTPUtil';
 import { BusinessError, pasteboard } from '@kit.BasicServicesKit';
 import { Logger } from '@nzy/logger';
-import { AdaptiveIconButton } from './AdaptiveButton';
 
 /**
  * TOTP验证码列表项组件
@@ -12,6 +11,8 @@ import { AdaptiveIconButton } from './AdaptiveButton';
 @Component
 export struct TotpListItem {
   @Prop cipher: Cipher;
+  @Prop firstInGroup: boolean = false;
+  @Prop lastInGroup: boolean = false;
   @State currentCode: string = '--- ---';
   @State remainingSeconds: number = 30;
   @Prop currentTime: number = Date.now(); // 从父组件接收时间变化
@@ -97,84 +98,111 @@ export struct TotpListItem {
   }
 
   build() {
-    Column() {
-      // 第一行：名称和用户名
+    Stack({ alignContent: Alignment.Bottom }) {
       Row() {
-        Column() {
-          Text(this.cipher.name)
-            .fontSize(14)
-            .fontWeight(FontWeight.Medium)
-            .maxLines(1)
-            .textOverflow({ overflow: TextOverflow.Ellipsis })
+        Row() {
+          Image($r('app.media.icon_cipher_login'))
+            .width(24)
+            .height(24)
+            .objectFit(ImageFit.Contain)
+            .margin({ right: 16 })
+            .accessibilityLevel('no')
 
-          if (this.cipher.login?.username) {
-            Text(this.cipher.login.username)
-              .fontSize(12)
-              .fontColor($r('app.color.vault_secondary_text'))
+          Column() {
+            Text(this.cipher.name)
+              .fontSize(15)
+              .lineHeight(20)
+              .fontWeight(FontWeight.Regular)
+              .fontColor($r('sys.color.font_primary'))
               .maxLines(1)
               .textOverflow({ overflow: TextOverflow.Ellipsis })
-              .margin({ top: 4 })
+
+            if (this.cipher.login?.username) {
+              Text(this.cipher.login.username)
+                .fontSize(13)
+                .lineHeight(18)
+                .fontColor($r('app.color.vault_secondary_text'))
+                .maxLines(1)
+                .textOverflow({ overflow: TextOverflow.Ellipsis })
+                .margin({ top: 2 })
+            }
+
           }
+          .alignItems(HorizontalAlign.Start)
+          .layoutWeight(1)
         }
-        .alignItems(HorizontalAlign.Start)
         .layoutWeight(1)
-      }
-      .width('100%')
-      .margin({ bottom: 8 })
-      .accessibilityGroup(true)
-      .onClick(() => {
-        this.onTap?.();
-      })
+        .alignItems(VerticalAlign.Center)
+        .accessibilityGroup(true)
+        .onClick(() => {
+          this.onTap?.();
+        })
 
-      // 第二行：验证码和倒计时
-      Row() {
-        // 验证码
-        Text(this.currentCode)
-          .fontSize(24)
-          .fontWeight(FontWeight.Bold)
-
-        Blank()
-
-        // 状态指示器和剩余时间
-        Row() {
+        Column() {
           Stack({ alignContent: Alignment.Center }) {
             Progress({ value: this.remainingSeconds, total: 30, type: ProgressType.Ring })
-              .width(36)
-              .height(36)
-              .color(this.remainingSeconds > 5 ? $r('app.color.brand_accent_color') : Color.Red)
+              .width(30)
+              .height(30)
+              .color($r('app.color.brand_accent_color'))
+              .style({ strokeWidth: 3 })
             Text(this.remainingSeconds.toString())
               .fontSize(12)
               .fontColor($r('app.color.vault_secondary_text'))
           }
-          .width(36)
-          .height(36)
-          .margin({ right: 8 })
-          .accessibilityText($r('app.string.totp_seconds', this.remainingSeconds))
-
-          // 复制按钮
-          Column() {
-            AdaptiveIconButton({
-              icon: $r('app.media.icon_copy'),
-              accessibilityLabel: $r('app.string.accessibility_copy_totp'),
-              barWidth: 40,
-              barHeight: 40,
-              iconWidth: 20,
-              iconHeight: 20,
-              contentPadding: 6,
-              barBottomMargin: 0,
-              onButtonClick: () => {
-                this.copyCode();
-              }
-            })
-          }
-
+          .width(30)
+          .height(30)
+          .accessibilityLevel('no')
         }
+        .width(56)
+        .height(56)
+        .justifyContent(FlexAlign.Center)
+        .accessibilityGroup(true)
+        .accessibilityText($r('app.string.totp_seconds', this.remainingSeconds))
+
+        Text(this.currentCode)
+          .fontSize(14)
+          .lineHeight(20)
+          .fontFamily('monospace')
+          .letterSpacing(0.5)
+          .fontColor($r('sys.color.font_primary'))
+          .maxLines(1)
+
+        Button() {
+          Image($r('app.media.icon_copy'))
+            .width(24)
+            .height(24)
+            .fillColor($r('sys.color.icon_primary'))
+            .accessibilityLevel('no')
+        }
+        .type(ButtonType.Circle)
+        .buttonStyle(ButtonStyleMode.TEXTUAL)
+        .width(48)
+        .height(48)
+        .margin({ left: 16 })
+        .padding(0)
+        .accessibilityText($r('app.string.accessibility_copy_totp'))
+        .onClick(() => {
+          this.copyCode();
+        })
       }
       .width('100%')
+      .constraintSize({ minHeight: 80 })
+      .padding({ left: 16, right: 4, top: 10, bottom: 10 })
+
+      if (!this.lastInGroup) {
+        Divider()
+          .color($r('app.color.vault_divider_color'))
+          .margin({ left: 56 })
+      }
     }
     .width('100%')
-    .padding(12)
-    .borderRadius(8)
-    .margin({ bottom: 8 })
+    .backgroundColor($r('app.color.vault_list_background'))
+    .borderRadius({
+      topLeft: this.firstInGroup ? 8 : 0,
+      topRight: this.firstInGroup ? 8 : 0,
+      bottomLeft: this.lastInGroup ? 8 : 0,
+      bottomRight: this.lastInGroup ? 8 : 0
+    })
+    .clip(true)
   }
 }

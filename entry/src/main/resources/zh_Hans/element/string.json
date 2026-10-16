@@ -813,6 +813,10 @@
       "value": "验证码"
     },
     {
+      "name": "totp_items_count",
+      "value": "项目（%1$d）"
+    },
+    {
       "name": "totp_empty",
       "value": "暂无验证码"
     },

@@ -6,7 +6,6 @@ import { uniformTypeDescriptor } from '@kit.ArkData';
 import { common } from '@kit.AbilityKit';
 import { getShareLink } from '../utils/ParseLinkUtil';
 import { hdsMaterial, HdsNavDestination } from '@kit.UIDesignKit';
-import { AdaptiveIconButton } from '../component/AdaptiveButton';
 import { DetailRouter } from '../utils/DetailRouter';
 import { ConfirmDialog } from '../component/ConfirmDialog';
 import { HistorySelectionBar, HistorySelectionIndicator } from '../component/HistorySelectionControls';
@@ -281,20 +280,23 @@ struct History {
           value: this.searchText,
           placeholder: $r('app.string.share_history_search')
         })
+          .height(56)
+          .textFont({ size: 15 })
+          .placeholderFont({ size: 15 })
+          .backgroundColor($r('app.color.menu_background_color'))
+          .borderRadius(16)
           .searchButton($r('app.string.common_search'))
           .onChange((value: string) => {
             this.onSearchChange(value);
           })
           .margin({
             top: 12,
-            left: 16,
-            right: 16,
-            bottom: 12
+            bottom: 16
           })
 
         // 历史记录列表
         if (this.filteredList.length > 0) {
-          List({ space: 8 }) {
+          List({ space: 0 }) {
             ForEach(this.filteredList, (item: HistoryItem) => {
               ListItem() {
                 this.HistoryItemBuilder(item);
@@ -303,11 +305,14 @@ struct History {
           }
           .width('100%')
           .layoutWeight(1)
-          .padding({ left: 16, right: 16, top: 12 })
+          .divider({ strokeWidth: 1, color: $r('app.color.vault_divider_color'), startMargin: 16, endMargin: 16 })
+          .backgroundColor($r('app.color.menu_background_color'))
+          .borderRadius(16)
+          .clip(true)
         } else {
           Column() {
             Text($r('app.string.share_history_empty'))
-              .fontSize(16)
+              .fontSize(15)
               .fontColor($r('app.color.vault_secondary_text'))
           }
           .width('100%')
@@ -322,6 +327,8 @@ struct History {
       }
       .width('100%')
       .height('100%')
+      .padding({ left: 16, right: 16, bottom: 16 })
+      .backgroundColor($r('app.color.start_window_background'))
     }
     .titleBar({
       content: {
@@ -379,7 +386,7 @@ struct History {
     })
   }
 
-  // 单条历史记录卡片
+  // 单条历史记录
   @Builder
   HistoryItemBuilder(item: HistoryItem) {
     Row() {
@@ -387,36 +394,36 @@ struct History {
         this.SelectionIndicator(item)
       }
 
-      Column({ space: 6 }) {
-        Text(HistoryTimeFormatter.format(item.timestamp))
-          .fontSize(12)
-          .fontColor($r('app.color.vault_secondary_text'))
-
+      Column({ space: 4 }) {
         Text(item.content)
-          .fontSize(16)
-          .fontFamily('monospace')
-          .maxLines(3)
+          .fontSize(15)
+          .fontColor($r('sys.color.font_primary'))
+          .maxLines(2)
           .textOverflow({ overflow: TextOverflow.Ellipsis })
           .align(Alignment.Start)
           .width('100%')
+
+        Text(HistoryTimeFormatter.format(item.timestamp))
+          .fontSize(13)
+          .fontColor($r('app.color.vault_secondary_text'))
       }
       .alignItems(HorizontalAlign.Start)
       .layoutWeight(1)
 
       if (!this.inSelectionMode) {
-        Row({ space: 12 }) {
+        Row({ space: 0 }) {
           Button() {
             Image($r('app.media.icon_copy'))
-              .width(18)
-              .height(18)
-              .fillColor($r('app.color.button_foreground_color'))
+              .width(20)
+              .height(20)
+              .fillColor($r('app.color.brand_accent_color'))
               .accessibilityLevel('no')
           }
-            .type(ButtonType.Circle)
-            .width(36)
-            .height(36)
+            .type(ButtonType.Normal)
+            .width(40)
+            .height(60)
             .padding(0)
-            .backgroundColor($r('app.color.button_background_color'))
+            .backgroundColor(Color.Transparent)
             .accessibilityText($r('app.string.common_copy'))
             .bindMenu([
               {
@@ -439,16 +446,16 @@ struct History {
 
           Button() {
             Image($r('app.media.icon_share'))
-              .width(18)
-              .height(18)
-              .fillColor($r('app.color.button_foreground_color'))
+              .width(20)
+              .height(20)
+              .fillColor($r('app.color.brand_accent_color'))
               .accessibilityLevel('no')
           }
-            .type(ButtonType.Circle)
-            .width(36)
-            .height(36)
+            .type(ButtonType.Normal)
+            .width(40)
+            .height(60)
             .padding(0)
-            .backgroundColor($r('app.color.button_background_color'))
+            .backgroundColor(Color.Transparent)
             .accessibilityText($r('app.string.common_share'))
             .bindMenu([
               {
@@ -469,27 +476,30 @@ struct History {
               backgroundBlurStyle: BlurStyle.NONE
             })
 
-          AdaptiveIconButton({
-            icon: $r('app.media.icon_delete'),
-            accessibilityLabel: $r('app.string.common_delete'),
-            barWidth: 36,
-            barHeight: 36,
-            iconWidth: 18,
-            iconHeight: 18,
-            contentPadding: 0,
-            barBottomMargin: 0,
-            onButtonClick: () => {
+          Button() {
+            Image($r('app.media.icon_delete'))
+              .width(20)
+              .height(20)
+              .fillColor($r('app.color.brand_accent_color'))
+              .accessibilityLevel('no')
+          }
+            .type(ButtonType.Normal)
+            .width(40)
+            .height(60)
+            .padding(0)
+            .backgroundColor(Color.Transparent)
+            .accessibilityText($r('app.string.common_delete'))
+            .onClick(() => {
               this.requestDelete(item);
-            }
-          })
+            })
         }
       }
     }
     .width('100%')
-    .padding(16)
-    .borderRadius(8)
+    .constraintSize({ minHeight: 60 })
+    .padding({ left: 16, right: 8 })
     .backgroundColor(this.inSelectionMode && this.isSelected(item.id) ?
-      '#1A2777DA' : $r('app.color.start_window_background'))
+      $r('app.color.secondary_button_background_color') : $r('app.color.menu_background_color'))
     .accessibilityGroup(this.inSelectionMode)
     .accessibilitySelected(this.isSelected(item.id))
     .onClick(() => {

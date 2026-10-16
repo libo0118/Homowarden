@@ -829,6 +829,8 @@ export struct VaultPage {
   @State vaultActivationRevision: number = 0;
   @State vaultManualRefreshRevision: number = 0;
   @State showVaultSearch: boolean = false;
+  @State showTotpSearch: boolean = false;
+  @State totpSearchResetRevision: number = 0;
   @State vaultFilterType: FilterType = FilterType.ALL;
   @State vaultSearchResetRevision: number = 0;
   @State accountInitials: string = 'H';
@@ -861,7 +863,7 @@ export struct VaultPage {
 
   private getTitle(): ResourceStr {
     if (this.selectedMainTab === MainTab.TOTP) {
-      return $r('app.string.nav_totp');
+      return $r('app.string.totp_title');
     }
     if (this.selectedMainTab === MainTab.GENERATOR) {
       return $r('app.string.generator_title');
@@ -936,6 +938,11 @@ export struct VaultPage {
     this.showVaultSearch = false;
     this.vaultFilterType = FilterType.ALL;
     this.vaultSearchResetRevision++;
+  }
+
+  private resetTotpSearch(): void {
+    this.showTotpSearch = false;
+    this.totpSearchResetRevision++;
   }
 
   private vaultOverflowItems(): MenuElement[] {
@@ -1126,7 +1133,22 @@ export struct VaultPage {
   @Builder
   private compactTopBar() {
     Row() {
-      if (this.selectedMainTab === MainTab.SETTINGS && this.settingsPanel !== 0) {
+      if (this.selectedMainTab === MainTab.TOTP) {
+        Button() {
+          Text('‹').fontSize(32).fontColor($r('sys.color.icon_primary'))
+        }
+        .width(48).height(48)
+        .padding(0)
+        .buttonStyle(ButtonStyleMode.TEXTUAL)
+        .accessibilityText($r('app.string.common_cancel'))
+        .onClick(() => {
+          if (this.showTotpSearch) {
+            this.resetTotpSearch();
+          } else {
+            this.selectTab(MainTab.VAULT);
+          }
+        })
+      } else if (this.selectedMainTab === MainTab.SETTINGS && this.settingsPanel !== 0) {
         Button() {
           Text('‹').fontSize(32).fontColor($r('sys.color.icon_primary'))
         }
@@ -1147,8 +1169,10 @@ export struct VaultPage {
         .onClick(() => this.resetVaultSearch())
       }
       Text(this.getTitle())
-        .fontSize(this.selectedMainTab === MainTab.SETTINGS && this.settingsPanel !== 0 ? 19 : 28)
-        .lineHeight(this.selectedMainTab === MainTab.SETTINGS && this.settingsPanel !== 0 ? 24 : 36)
+        .fontSize(this.selectedMainTab === MainTab.TOTP ||
+          (this.selectedMainTab === MainTab.SETTINGS && this.settingsPanel !== 0) ? 19 : 28)
+        .lineHeight(this.selectedMainTab === MainTab.TOTP ||
+          (this.selectedMainTab === MainTab.SETTINGS && this.settingsPanel !== 0) ? 24 : 36)
         .fontWeight(600)
         .maxLines(1)
         .textOverflow({ overflow: TextOverflow.Ellipsis })
@@ -1195,6 +1219,28 @@ export struct VaultPage {
           backgroundColor: $r('app.color.menu_background_color'),
           backgroundBlurStyle: BlurStyle.NONE
         })
+      } else if (this.selectedMainTab === MainTab.TOTP) {
+        if (!this.showTotpSearch) {
+          Button() {
+            Image($r('app.media.icon_search')).width(24).height(24)
+          }
+          .width(48).height(48)
+          .padding(0)
+          .buttonStyle(ButtonStyleMode.TEXTUAL)
+          .accessibilityText($r('app.string.vault_search_placeholder'))
+          .onClick(() => { this.showTotpSearch = true; })
+        }
+        Button() {
+          Text('\u22ee').fontSize(24).fontColor($r('sys.color.icon_primary'))
+        }
+        .width(48).height(48)
+        .padding(0)
+        .buttonStyle(ButtonStyleMode.TEXTUAL)
+        .accessibilityText($r('app.string.vault_item_menu'))
+        .bindMenu(this.vaultOverflowItems(), {
+          backgroundColor: $r('app.color.menu_background_color'),
+          backgroundBlurStyle: BlurStyle.NONE
+        })
       } else if (this.selectedMainTab === MainTab.GENERATOR) {
         Button() {
           Image($r('app.media.icon_history')).width(24).height(24)
@@ -1207,7 +1253,8 @@ export struct VaultPage {
       }
     }
     .width('100%')
-    .height(this.selectedMainTab === MainTab.SETTINGS && this.settingsPanel !== 0 ? 48 : 56)
+    .height(this.selectedMainTab === MainTab.TOTP ||
+      (this.selectedMainTab === MainTab.SETTINGS && this.settingsPanel !== 0) ? 48 : 56)
     .padding({ left: 16, right: 4 })
     .backgroundColor($r('app.color.start_window_background'))
   }
@@ -1220,6 +1267,8 @@ export struct VaultPage {
       symmetricKey: this.sharedSymmetricKey,
       isActive: this.selectedMainTab === MainTab.TOTP,
       dataRevision: this.vaultDataRevision,
+      showSearchBar: this.showTotpSearch,
+      searchResetRevision: this.totpSearchResetRevision,
       onNavigateToDetail: (params: CipherDetailParams) => {
         this.navigateToCipherDetail(params);
       }
@@ -1442,6 +1491,14 @@ export struct VaultPage {
       }, 0);
     })
     .onBackPressed(() => {
+      if (this.selectedMainTab === MainTab.TOTP) {
+        if (this.showTotpSearch) {
+          this.resetTotpSearch();
+        } else {
+          this.selectTab(MainTab.VAULT);
+        }
+        return true;
+      }
       if (this.selectedMainTab === MainTab.SETTINGS && this.settingsPanel !== 0) {
         this.settingsPanel = 0;
         return true;

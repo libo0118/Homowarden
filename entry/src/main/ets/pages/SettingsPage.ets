@@ -133,7 +133,7 @@ export struct SettingsPage {
       Image(icon)
         .width(24)
         .height(24)
-        .fillColor($r('sys.color.icon_primary'))
+        .fillColor($r('app.color.settings_icon_color'))
         .margin({ right: 12 })
       Text(label)
         .fontSize(15)
@@ -144,7 +144,7 @@ export struct SettingsPage {
         .height(16)
         .commands('M6 3 L11 8 L6 13')
         .fill(Color.Transparent)
-        .stroke($r('sys.color.icon_primary'))
+        .stroke($r('app.color.settings_icon_color'))
         .strokeWidth(1.5)
     }
     .width('100%')
@@ -168,23 +168,23 @@ export struct SettingsPage {
     Scroll() {
       Column() {
         Column() {
-          this.settingsPushRow($r('app.string.settings_security'), $r('app.media.icon_key'), () => {
+          this.settingsPushRow($r('app.string.settings_security'), $r('app.media.icon_settings_security'), () => {
             this.settingsPanel = 1;
           })
           this.settingsRowDivider()
-          this.settingsPushRow($r('app.string.settings_account'), $r('app.media.icon_cipher_identity'), () => {
+          this.settingsPushRow($r('app.string.settings_account'), $r('app.media.icon_settings_account'), () => {
             this.settingsPanel = 2;
           })
           this.settingsRowDivider()
-          this.settingsPushRow($r('app.string.settings_about'), $r('app.media.icon_settings'), () => {
+          this.settingsPushRow($r('app.string.settings_about'), $r('app.media.icon_settings_about'), () => {
             this.settingsPanel = 3;
           })
           this.settingsRowDivider()
-          this.settingsPushRow($r('app.string.nav_share'), $r('app.media.icon_nav_share'), () => {
+          this.settingsPushRow($r('app.string.nav_share'), $r('app.media.icon_settings_share'), () => {
             this.onOpenShare();
           })
           this.settingsRowDivider()
-          this.settingsPushRow($r('app.string.share_history_title'), $r('app.media.icon_history'), () => {
+          this.settingsPushRow($r('app.string.share_history_title'), $r('app.media.icon_settings_history'), () => {
             this.onOpenShareHistory();
           })
         }
@@ -201,10 +201,208 @@ export struct SettingsPage {
     .align(Alignment.TopStart)
   }
 
+  @Builder
+  private settingsField(label: Resource, value: string, valueColor: ResourceColor) {
+    Column({ space: 4 }) {
+      Text(label)
+        .fontSize(12)
+        .fontColor($r('app.color.vault_secondary_text'))
+        .width('100%')
+      Text(value)
+        .fontSize(15)
+        .fontColor(valueColor)
+        .width('100%')
+    }
+    .width('100%')
+    .constraintSize({ minHeight: 60 })
+    .padding({ left: 16, right: 16, top: 10, bottom: 10 })
+    .alignItems(HorizontalAlign.Start)
+    .justifyContent(FlexAlign.Center)
+  }
+
+  @Builder
+  private settingsFieldDivider() {
+    Divider()
+      .color($r('app.color.vault_divider_color'))
+      .strokeWidth(1)
+      .margin({ left: 16, right: 16 })
+  }
+
+  @Builder
+  private settingsToggleCard(label: Resource, description: Resource, isOn: boolean,
+    onChange: (isOn: boolean) => void) {
+    Row({ space: 16 }) {
+      Column({ space: 4 }) {
+        Text(label)
+          .fontSize(15)
+          .fontColor($r('sys.color.font_primary'))
+          .width('100%')
+        Text(description)
+          .fontSize(12)
+          .fontColor($r('app.color.vault_secondary_text'))
+          .width('100%')
+      }
+      .layoutWeight(1)
+      .alignItems(HorizontalAlign.Start)
+      Toggle({ type: ToggleType.Switch, isOn: isOn })
+        .selectedColor($r('app.color.brand_accent_color'))
+        .accessibilityText(label)
+        .onChange(onChange)
+    }
+    .width('100%')
+    .constraintSize({ minHeight: 60 })
+    .padding({ left: 16, right: 16, top: 12, bottom: 12 })
+    .backgroundColor($r('app.color.menu_background_color'))
+    .borderRadius(16)
+  }
+
+  @Builder
+  private settingsActionRow(label: Resource, color: ResourceColor, action: () => void) {
+    Row() {
+      Text(label)
+        .fontSize(15)
+        .fontColor(color)
+        .width('100%')
+    }
+    .width('100%')
+    .constraintSize({ minHeight: 60 })
+    .padding({ left: 16, right: 16, top: 6, bottom: 6 })
+    .accessibilityText(label)
+    .onClick(action)
+  }
+
+  @Builder
+  private mobileSecuritySettings() {
+    Column({ space: 8 }) {
+      this.settingsToggleCard($r('app.string.settings_biometrics'), $r('app.string.settings_biometrics_desc'),
+        this.biometricEnabled, (isOn: boolean) => this.setBiometricEnabled(isOn))
+      Column({ space: 4 }) {
+        Text($r('app.string.settings_auto_lock'))
+          .fontSize(12)
+          .fontColor($r('app.color.vault_secondary_text'))
+          .width('100%')
+        AppDropdown({
+          options: AppOptionFactory.autoLockTimeouts(),
+          value: this.autoLockTimeoutSeconds,
+          optionFontSize: 15,
+          accessibilityLabel: $r('app.string.settings_auto_lock'),
+          onChange: (value: number) => {
+            this.autoLockTimeoutSeconds = AutoLockUtil.setTimeoutSeconds(value);
+          }
+        })
+        Text($r('app.string.settings_auto_lock_desc'))
+          .fontSize(12)
+          .fontColor($r('app.color.vault_secondary_text'))
+          .width('100%')
+      }
+      .width('100%')
+      .padding({ left: 16, right: 16, top: 12, bottom: 12 })
+      .backgroundColor($r('app.color.menu_background_color'))
+      .borderRadius(16)
+      this.settingsToggleCard($r('app.string.settings_block_capture'), $r('app.string.settings_block_capture_desc'),
+        this.screenCaptureProtectionEnabled, (isOn: boolean) => {
+          void this.setScreenCaptureProtectionEnabled(isOn);
+        })
+      this.settingsToggleCard($r('app.string.settings_anti_peep'), $r('app.string.settings_anti_peep_desc'),
+        this.antiPeepProtectionEnabled, (isOn: boolean) => {
+          void this.setAntiPeepProtectionEnabled(isOn);
+        })
+    }
+    .width('100%')
+  }
+
+  @Builder
+  private mobileAccountSettings() {
+    Column({ space: 16 }) {
+      Column() {
+        this.settingsField($r('app.string.settings_logged_in_as'), this.email, $r('sys.color.font_primary'))
+        this.settingsFieldDivider()
+        this.settingsField($r('app.string.settings_server'), this.serverAddressText, $r('sys.color.font_primary'))
+      }
+      .width('100%')
+      .backgroundColor($r('app.color.menu_background_color'))
+      .borderRadius(16)
+      .clip(true)
+      Column() {
+        this.settingsActionRow($r('app.string.common_lock_now'), $r('app.color.brand_accent_color'), () => {
+          this.lockVault();
+        })
+        this.settingsFieldDivider()
+        this.settingsActionRow($r('app.string.unlock_logout'), $r('sys.color.warning'), () => {
+          this.logout();
+        })
+      }
+      .width('100%')
+      .backgroundColor($r('app.color.menu_background_color'))
+      .borderRadius(16)
+      .clip(true)
+      Text($r('app.string.settings_logout_warning'))
+        .fontSize(12)
+        .fontColor($r('app.color.vault_secondary_text'))
+        .width('100%')
+        .padding({ left: 16, right: 16 })
+    }
+    .width('100%')
+  }
+
+  @Builder
+  private mobileAboutSettings() {
+    Column() {
+      this.settingsField($r('app.string.common_version'), this.versionName, $r('sys.color.font_primary'))
+      this.settingsFieldDivider()
+      Column() {
+        this.settingsField($r('app.string.settings_author_email'), 'yume.w@outlook.com',
+          $r('app.color.brand_accent_color'))
+      }
+      .width('100%')
+      .accessibilityText($r('app.string.settings_author_email'))
+      .onClick(() => this.openEmail())
+      this.settingsFieldDivider()
+      Column() {
+        this.settingsField($r('app.string.settings_qq_group'), '1087498262', $r('app.color.brand_accent_color'))
+      }
+      .width('100%')
+      .accessibilityText($r('app.string.settings_qq_group'))
+      .onClick(() => {
+        void this.copyQQGroup();
+      })
+      this.settingsFieldDivider()
+      this.settingsActionRow($r('app.string.log_export_action'), $r('app.color.brand_accent_color'), () => {
+        this.logExportDialogController.open();
+      })
+    }
+    .width('100%')
+    .backgroundColor($r('app.color.menu_background_color'))
+    .borderRadius(16)
+    .clip(true)
+  }
+
+  @Builder
+  private mobileSettingsDetails() {
+    Scroll() {
+      Column() {
+        if (this.settingsPanel === 1) {
+          this.mobileSecuritySettings()
+        } else if (this.settingsPanel === 2) {
+          this.mobileAccountSettings()
+        } else if (this.settingsPanel === 3) {
+          this.mobileAboutSettings()
+        }
+        Row().height(this.bottomContentInset + 16)
+      }
+      .width('100%')
+      .padding({ left: 16, right: 16, top: 12 })
+    }
+    .layoutWeight(1)
+    .align(Alignment.TopStart)
+  }
+
   build() {
     Column() {
       if (!this.isPc && this.settingsPanel === 0) {
         this.mobileSettingsRoot()
+      } else if (!this.isPc) {
+        this.mobileSettingsDetails()
       } else {
         this.settingsSections()
       }
@@ -237,17 +435,7 @@ export struct SettingsPage {
                 Toggle({ type: ToggleType.Switch, isOn: this.biometricEnabled })
                   .selectedColor($r('app.color.brand_accent_color'))
                   .accessibilityText($r('app.string.settings_biometrics'))
-                  .onChange((isOn: boolean) => {
-                    if (isOn) {
-                      this.biometricEnabled = true;
-                      // 打开开关时，先发起生物识别认证
-                      this.startBiometricAuth();
-                    } else {
-                      // 关闭开关时，直接更新状态
-                      this.biometricEnabled = false;
-                      this.updateBiometricAuthStatus(false);
-                    }
-                  })
+                  .onChange((isOn: boolean) => this.setBiometricEnabled(isOn))
               }
               .width('100%')
               .padding({ top: 20, bottom: 4 })
@@ -292,14 +480,7 @@ export struct SettingsPage {
                 Toggle({ type: ToggleType.Switch, isOn: this.screenCaptureProtectionEnabled })
                   .selectedColor($r('app.color.brand_accent_color'))
                   .accessibilityText($r('app.string.settings_block_capture'))
-                  .onChange(async (isOn: boolean) => {
-                    this.screenCaptureProtectionEnabled = isOn;
-                    // 先保存用户选择并尝试应用窗口属性；系统调用失败时提示用户，开关状态不回滚
-                    const applied = await WindowPrivacyUtil.setScreenCaptureProtectionEnabled(isOn);
-                    if (!applied) {
-                      AppToast.show(this.getUIContext(), $r('app.string.error_save_failed'));
-                    }
-                  })
+                  .onChange(async (isOn: boolean) => this.setScreenCaptureProtectionEnabled(isOn))
               }
               .width('100%')
               .padding({ top: 20, bottom: 4 })
@@ -319,21 +500,7 @@ export struct SettingsPage {
                   Toggle({ type: ToggleType.Switch, isOn: this.antiPeepProtectionEnabled })
                     .selectedColor($r('app.color.brand_accent_color'))
                     .accessibilityText($r('app.string.settings_anti_peep'))
-                    .onChange(async (isOn: boolean) => {
-                      this.antiPeepProtectionEnabled = isOn;
-                      if (!isOn) {
-                        await AntiPeepUtil.setProtectionEnabled(false);
-                        this.antiPeepProtectionEnabled = false;
-                        return;
-                      }
-
-                      const context = this.getUIContext().getHostContext() as common.UIAbilityContext;
-                      const enabled = await AntiPeepUtil.setProtectionEnabled(true, context);
-                      this.antiPeepProtectionEnabled = enabled;
-                      if (!enabled) {
-                        AppToast.show(this.getUIContext(), $r('app.string.error_save_failed'));
-                      }
-                    })
+                    .onChange(async (isOn: boolean) => this.setAntiPeepProtectionEnabled(isOn))
                 }
                 .width('100%')
                 .padding({ top: 20, bottom: 4 })
@@ -538,6 +705,40 @@ export struct SettingsPage {
     }
     .width('100%')
     .layoutWeight(1)
+  }
+
+  private setBiometricEnabled(isOn: boolean): void {
+    this.biometricEnabled = isOn;
+    if (isOn) {
+      this.startBiometricAuth();
+    } else {
+      this.updateBiometricAuthStatus(false);
+    }
+  }
+
+  private async setScreenCaptureProtectionEnabled(isOn: boolean): Promise<void> {
+    this.screenCaptureProtectionEnabled = isOn;
+    // 先保存用户选择并尝试应用窗口属性；系统调用失败时提示用户，开关状态不回滚
+    const applied = await WindowPrivacyUtil.setScreenCaptureProtectionEnabled(isOn);
+    if (!applied) {
+      AppToast.show(this.getUIContext(), $r('app.string.error_save_failed'));
+    }
+  }
+
+  private async setAntiPeepProtectionEnabled(isOn: boolean): Promise<void> {
+    this.antiPeepProtectionEnabled = isOn;
+    if (!isOn) {
+      await AntiPeepUtil.setProtectionEnabled(false);
+      this.antiPeepProtectionEnabled = false;
+      return;
+    }
+
+    const context = this.getUIContext().getHostContext() as common.UIAbilityContext;
+    const enabled = await AntiPeepUtil.setProtectionEnabled(true, context);
+    this.antiPeepProtectionEnabled = enabled;
+    if (!enabled) {
+      AppToast.show(this.getUIContext(), $r('app.string.error_save_failed'));
+    }
   }
 
   openEmail() {
