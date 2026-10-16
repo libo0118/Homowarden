@@ -232,15 +232,17 @@ export struct AddCipherPage {
 
           // 名称
           Text($r('app.string.cipher_item_name'))
-            .fontSize(14)
+            .fontSize(12)
             .fontColor($r('app.color.vault_secondary_text'))
             .margin({
               left: 16,
               right: 16,
-              top: 20,
+              top: 16,
               bottom: 4
             })
           TextInput()
+            .fontSize(16)
+            .height(48)
             .accessibilityText($r('app.string.cipher_item_name'))
             .onChange((v: string) => {
               this.viewModel.name = v;
@@ -252,12 +254,14 @@ export struct AddCipherPage {
             // 用户名
             Column({ space: 4 }) {
               Text($r('app.string.cipher_username'))
-                .fontSize(14)
+                .fontSize(12)
                 .fontWeight(FontWeight.Medium)
                 .fontColor($r('app.color.vault_secondary_text'))
                 .width('100%')
               Row({ space: 8 }) {
                 TextInput({ text: this.loginUsername })
+                  .fontSize(16)
+                  .height(48)
                   .accessibilityText($r('app.string.cipher_username'))
                   .layoutWeight(1)
                   .onChange((v: string) => {
@@ -267,8 +271,8 @@ export struct AddCipherPage {
                 AdaptiveIconButton({
                   icon: $r('app.media.icon_password'),
                   accessibilityLabel: $r('app.string.accessibility_generate'),
-                  barWidth: 32,
-                  barHeight: 32,
+                  barWidth: 40,
+                  barHeight: 40,
                   iconWidth: 20,
                   iconHeight: 20,
                   contentPadding: 4,
@@ -281,17 +285,19 @@ export struct AddCipherPage {
               }
               .width('100%')
             }
-            .margin({ left: 16, right: 16, top: 20, bottom: 8 })
+            .margin({ left: 16, right: 16, top: 16, bottom: 8 })
 
             // 密码
             Column({ space: 4 }) {
               Text($r('app.string.cipher_password'))
-                .fontSize(14)
+                .fontSize(12)
                 .fontWeight(FontWeight.Medium)
                 .fontColor($r('app.color.vault_secondary_text'))
                 .width('100%')
               Row({ space: 8 }) {
                 TextInput({ text: this.loginPassword, placeholder: $r('app.string.login_password_placeholder') })
+                  .fontSize(16)
+                  .height(48)
                   .accessibilityText($r('app.string.cipher_password'))
                   .type(InputType.Password)
                   .layoutWeight(1)
@@ -302,8 +308,8 @@ export struct AddCipherPage {
                 AdaptiveIconButton({
                   icon: $r('app.media.icon_password'),
                   accessibilityLabel: $r('app.string.accessibility_generate'),
-                  barWidth: 32,
-                  barHeight: 32,
+                  barWidth: 40,
+                  barHeight: 40,
                   iconWidth: 20,
                   iconHeight: 20,
                   contentPadding: 4,
@@ -316,11 +322,11 @@ export struct AddCipherPage {
               }
               .width('100%')
             }
-            .margin({ left: 16, right: 16, top: 20, bottom: 8 })
+            .margin({ left: 16, right: 16, top: 16, bottom: 8 })
 
             // 网站
             Text($r('app.string.cipher_website'))
-              .fontSize(14)
+              .fontSize(12)
               .fontColor($r('app.color.vault_secondary_text'))
               .margin({
                 left: 16,
@@ -329,6 +335,8 @@ export struct AddCipherPage {
                 bottom: 4
               })
             TextInput({ placeholder: $r('app.string.cipher_website_example') })
+              .fontSize(16)
+              .height(48)
               .accessibilityText($r('app.string.cipher_website'))
               .onChange((v: string) => {
                 this.viewModel.loginUri.uri = v;
@@ -345,7 +353,7 @@ export struct AddCipherPage {
           } else if (this.cipherType == CipherItemType.IDENTITY) {
             // 称呼
             Text($r('app.string.cipher_identity_title'))
-              .fontSize(14)
+              .fontSize(12)
               .fontColor($r('app.color.vault_secondary_text'))
               .margin({
                 left: 16,
@@ -366,7 +374,7 @@ export struct AddCipherPage {
 
             // 名
             Text($r('app.string.cipher_first_name'))
-              .fontSize(14)
+              .fontSize(12)
               .fontColor($r('app.color.vault_secondary_text'))
               .margin({
                 left: 16,
@@ -375,6 +383,8 @@ export struct AddCipherPage {
                 bottom: 4
               })
             TextInput()
+              .fontSize(16)
+              .height(48)
               .accessibilityText($r('app.string.cipher_first_name'))
               .onChange((v: string) => {
                 this.viewModel.identityItem.firstName = v;
@@ -382,7 +392,7 @@ export struct AddCipherPage {
               .margin({ left: 16, right: 16 })
             // 中间名
             Text($r('app.string.cipher_middle_name'))
-              .fontSize(14)
+              .fontSize(12)
               .fontColor($r('app.color.vault_secondary_text'))
               .margin({
                 left: 16,
@@ -391,6 +401,8 @@ export struct AddCipherPage {
                 bottom: 4
               })
             TextInput()
+              .fontSize(16)
+              .height(48)
               .accessibilityText($r('app.string.cipher_middle_name'))
               .onChange((v: string) => {
                 this.viewModel.identityItem.middleName = v;
@@ -398,7 +410,7 @@ export struct AddCipherPage {
               .margin({ left: 16, right: 16 })
             // 姓
             Text($r('app.string.cipher_last_name'))
-              .fontSize(14)
+              .fontSize(12)
               .fontColor($r('app.color.vault_secondary_text'))
               .margin({
                 left: 16,
@@ -407,6 +419,8 @@ export struct AddCipherPage {
                 bottom: 4
               })
             TextInput()
+              .fontSize(16)
+              .height(48)
               .accessibilityText($r('app.string.cipher_last_name'))
               .onChange((v: string) => {
                 this.viewModel.identityItem.lastName = v;
@@ -414,7 +428,7 @@ export struct AddCipherPage {
               .margin({ left: 16, right: 16 })
             // 用户名
             Text($r('app.string.cipher_username'))
-              .fontSize(14)
+              .fontSize(12)
               .fontColor($r('app.color.vault_secondary_text'))
               .margin({
                 left: 16,
@@ -423,6 +437,8 @@ export struct AddCipherPage {
                 bottom: 4
               })
             TextInput()
+              .fontSize(16)
+              .height(48)
               .accessibilityText($r('app.string.cipher_username'))
               .onChange((v: string) => {
                 this.viewModel.identityItem.username = v;
@@ -430,7 +446,7 @@ export struct AddCipherPage {
               .margin({ left: 16, right: 16 })
             // 公司
             Text($r('app.string.cipher_company'))
-              .fontSize(14)
+              .fontSize(12)
               .fontColor($r('app.color.vault_secondary_text'))
               .margin({
                 left: 16,
@@ -439,6 +455,8 @@ export struct AddCipherPage {
                 bottom: 4
               })
             TextInput()
+              .fontSize(16)
+              .height(48)
               .accessibilityText($r('app.string.cipher_company'))
               .onChange((v: string) => {
                 this.viewModel.identityItem.company = v;
@@ -446,7 +464,7 @@ export struct AddCipherPage {
               .margin({ left: 16, right: 16 })
             // 社会保障号码
             Text($r('app.string.cipher_ssn'))
-              .fontSize(14)
+              .fontSize(12)
               .fontColor($r('app.color.vault_secondary_text'))
               .margin({
                 left: 16,
@@ -455,6 +473,8 @@ export struct AddCipherPage {
                 bottom: 4
               })
             TextInput({ placeholder: $r('app.string.cipher_ssn') })
+              .fontSize(16)
+              .height(48)
               .accessibilityText($r('app.string.cipher_ssn'))
               .onChange((v: string) => {
                 this.viewModel.identityItem.ssn = v;
@@ -463,7 +483,7 @@ export struct AddCipherPage {
               .type(InputType.Password)
             // 护照号码
             Text($r('app.string.cipher_passport'))
-              .fontSize(14)
+              .fontSize(12)
               .fontColor($r('app.color.vault_secondary_text'))
               .margin({
                 left: 16,
@@ -472,6 +492,8 @@ export struct AddCipherPage {
                 bottom: 4
               })
             TextInput({ placeholder: $r('app.string.cipher_passport') })
+              .fontSize(16)
+              .height(48)
               .accessibilityText($r('app.string.cipher_passport'))
               .onChange((v: string) => {
                 this.viewModel.identityItem.passportNumber = v;
@@ -480,7 +502,7 @@ export struct AddCipherPage {
               .type(InputType.Password)
             // 许可证号码
             Text($r('app.string.cipher_license'))
-              .fontSize(14)
+              .fontSize(12)
               .fontColor($r('app.color.vault_secondary_text'))
               .margin({
                 left: 16,
@@ -489,6 +511,8 @@ export struct AddCipherPage {
                 bottom: 4
               })
             TextInput()
+              .fontSize(16)
+              .height(48)
               .accessibilityText($r('app.string.cipher_license'))
               .onChange((v: string) => {
                 this.viewModel.identityItem.licenseNumber = v;
@@ -496,7 +520,7 @@ export struct AddCipherPage {
               .margin({ left: 16, right: 16 })
             // 电子邮箱
             Text($r('app.string.cipher_email'))
-              .fontSize(14)
+              .fontSize(12)
               .fontColor($r('app.color.vault_secondary_text'))
               .margin({
                 left: 16,
@@ -505,6 +529,8 @@ export struct AddCipherPage {
                 bottom: 4
               })
             TextInput()
+              .fontSize(16)
+              .height(48)
               .accessibilityText($r('app.string.cipher_email'))
               .onChange((v: string) => {
                 this.viewModel.identityItem.email = v;
@@ -512,7 +538,7 @@ export struct AddCipherPage {
               .margin({ left: 16, right: 16 })
             // 电话
             Text($r('app.string.cipher_phone'))
-              .fontSize(14)
+              .fontSize(12)
               .fontColor($r('app.color.vault_secondary_text'))
               .margin({
                 left: 16,
@@ -521,6 +547,8 @@ export struct AddCipherPage {
                 bottom: 4
               })
             TextInput()
+              .fontSize(16)
+              .height(48)
               .accessibilityText($r('app.string.cipher_phone'))
               .onChange((v: string) => {
                 this.viewModel.identityItem.phone = v;
@@ -528,7 +556,7 @@ export struct AddCipherPage {
               .margin({ left: 16, right: 16 })
             // 地址1
             Text($r('app.string.cipher_address1'))
-              .fontSize(14)
+              .fontSize(12)
               .fontColor($r('app.color.vault_secondary_text'))
               .margin({
                 left: 16,
@@ -537,6 +565,8 @@ export struct AddCipherPage {
                 bottom: 4
               })
             TextInput()
+              .fontSize(16)
+              .height(48)
               .accessibilityText($r('app.string.cipher_address1'))
               .onChange((v: string) => {
                 this.viewModel.identityItem.address1 = v;
@@ -544,7 +574,7 @@ export struct AddCipherPage {
               .margin({ left: 16, right: 16 })
             // 地址2
             Text($r('app.string.cipher_address2'))
-              .fontSize(14)
+              .fontSize(12)
               .fontColor($r('app.color.vault_secondary_text'))
               .margin({
                 left: 16,
@@ -553,6 +583,8 @@ export struct AddCipherPage {
                 bottom: 4
               })
             TextInput()
+              .fontSize(16)
+              .height(48)
               .accessibilityText($r('app.string.cipher_address2'))
               .onChange((v: string) => {
                 this.viewModel.identityItem.address2 = v;
@@ -560,7 +592,7 @@ export struct AddCipherPage {
               .margin({ left: 16, right: 16 })
             // 地址3
             Text($r('app.string.cipher_address3'))
-              .fontSize(14)
+              .fontSize(12)
               .fontColor($r('app.color.vault_secondary_text'))
               .margin({
                 left: 16,
@@ -569,6 +601,8 @@ export struct AddCipherPage {
                 bottom: 4
               })
             TextInput()
+              .fontSize(16)
+              .height(48)
               .accessibilityText($r('app.string.cipher_address3'))
               .onChange((v: string) => {
                 this.viewModel.identityItem.address3 = v;
@@ -576,7 +610,7 @@ export struct AddCipherPage {
               .margin({ left: 16, right: 16 })
             // 市/镇
             Text($r('app.string.cipher_city'))
-              .fontSize(14)
+              .fontSize(12)
               .fontColor($r('app.color.vault_secondary_text'))
               .margin({
                 left: 16,
@@ -585,6 +619,8 @@ export struct AddCipherPage {
                 bottom: 4
               })
             TextInput()
+              .fontSize(16)
+              .height(48)
               .accessibilityText($r('app.string.cipher_city'))
               .onChange((v: string) => {
                 this.viewModel.identityItem.city = v;
@@ -592,7 +628,7 @@ export struct AddCipherPage {
               .margin({ left: 16, right: 16 })
             // 州/省
             Text($r('app.string.cipher_state'))
-              .fontSize(14)
+              .fontSize(12)
               .fontColor($r('app.color.vault_secondary_text'))
               .margin({
                 left: 16,
@@ -601,6 +637,8 @@ export struct AddCipherPage {
                 bottom: 4
               })
             TextInput()
+              .fontSize(16)
+              .height(48)
               .accessibilityText($r('app.string.cipher_state'))
               .onChange((v: string) => {
                 this.viewModel.identityItem.state = v;
@@ -608,7 +646,7 @@ export struct AddCipherPage {
               .margin({ left: 16, right: 16 })
             // 邮政编码
             Text($r('app.string.cipher_postal_code'))
-              .fontSize(14)
+              .fontSize(12)
               .fontColor($r('app.color.vault_secondary_text'))
               .margin({
                 left: 16,
@@ -617,6 +655,8 @@ export struct AddCipherPage {
                 bottom: 4
               })
             TextInput()
+              .fontSize(16)
+              .height(48)
               .accessibilityText($r('app.string.cipher_postal_code'))
               .onChange((v: string) => {
                 this.viewModel.identityItem.postalCode = v;
@@ -624,7 +664,7 @@ export struct AddCipherPage {
               .margin({ left: 16, right: 16 })
             // 国家
             Text($r('app.string.cipher_country'))
-              .fontSize(14)
+              .fontSize(12)
               .fontColor($r('app.color.vault_secondary_text'))
               .margin({
                 left: 16,
@@ -633,6 +673,8 @@ export struct AddCipherPage {
                 bottom: 4
               })
             TextInput()
+              .fontSize(16)
+              .height(48)
               .accessibilityText($r('app.string.cipher_country'))
               .onChange((v: string) => {
                 this.viewModel.identityItem.country = v;
@@ -641,7 +683,7 @@ export struct AddCipherPage {
           } else if (this.cipherType == CipherItemType.CARD) {
             // 姓名
             Text($r('app.string.cipher_cardholder'))
-              .fontSize(14)
+              .fontSize(12)
               .fontColor($r('app.color.vault_secondary_text'))
               .margin({
                 left: 16,
@@ -650,6 +692,8 @@ export struct AddCipherPage {
                 bottom: 4
               })
             TextInput()
+              .fontSize(16)
+              .height(48)
               .accessibilityText($r('app.string.cipher_cardholder'))
               .onChange((v: string) => {
                 this.viewModel.cardItem.cardholderName = v;
@@ -657,7 +701,7 @@ export struct AddCipherPage {
               .margin({ left: 16, right: 16 })
             // 号码
             Text($r('app.string.cipher_number'))
-              .fontSize(14)
+              .fontSize(12)
               .fontColor($r('app.color.vault_secondary_text'))
               .margin({
                 left: 16,
@@ -666,6 +710,8 @@ export struct AddCipherPage {
                 bottom: 4
               })
             TextInput({ placeholder: $r('app.string.cipher_number') })
+              .fontSize(16)
+              .height(48)
               .accessibilityText($r('app.string.cipher_number'))
               .onChange((v: string) => {
                 this.viewModel.cardItem.number = v;
@@ -674,7 +720,7 @@ export struct AddCipherPage {
               .type(InputType.Password)
             // 品牌
             Text($r('app.string.cipher_brand'))
-              .fontSize(14)
+              .fontSize(12)
               .fontColor($r('app.color.vault_secondary_text'))
               .margin({
                 left: 16,
@@ -695,7 +741,7 @@ export struct AddCipherPage {
 
             // 过期月份
             Text($r('app.string.cipher_exp_month'))
-              .fontSize(14)
+              .fontSize(12)
               .fontColor($r('app.color.vault_secondary_text'))
               .margin({
                 left: 16,
@@ -704,6 +750,8 @@ export struct AddCipherPage {
                 bottom: 4
               })
             TextInput()
+              .fontSize(16)
+              .height(48)
               .accessibilityText($r('app.string.cipher_exp_month'))
               .onChange((v: string) => {
                 // 校验月份：只允许1-12
@@ -717,7 +765,7 @@ export struct AddCipherPage {
 
             // 过期年份
             Text($r('app.string.cipher_exp_year'))
-              .fontSize(14)
+              .fontSize(12)
               .fontColor($r('app.color.vault_secondary_text'))
               .margin({
                 left: 16,
@@ -726,6 +774,8 @@ export struct AddCipherPage {
                 bottom: 4
               })
             TextInput()
+              .fontSize(16)
+              .height(48)
               .accessibilityText($r('app.string.cipher_exp_year'))
               .onChange((v: string) => {
                 // 校验年份：只允许合理的公元年份（1900-9999）
@@ -738,7 +788,7 @@ export struct AddCipherPage {
               .type(InputType.NUMBER_DECIMAL)
             // 安全码
             Text($r('app.string.cipher_security_code'))
-              .fontSize(14)
+              .fontSize(12)
               .fontColor($r('app.color.vault_secondary_text'))
               .margin({
                 left: 16,
@@ -747,6 +797,8 @@ export struct AddCipherPage {
                 bottom: 4
               })
             TextInput({ placeholder: $r('app.string.cipher_security_code') })
+              .fontSize(16)
+              .height(48)
               .accessibilityText($r('app.string.cipher_security_code'))
               .onChange((v: string) => {
                 this.viewModel.cardItem.code = v;
@@ -757,7 +809,7 @@ export struct AddCipherPage {
 
           // 备注
           Text($r('app.string.cipher_notes'))
-            .fontSize(14)
+            .fontSize(12)
             .fontColor($r('app.color.vault_secondary_text'))
             .margin({
               left: 16,

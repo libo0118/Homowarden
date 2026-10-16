@@ -30,7 +30,7 @@ export struct CipherDetailTextItem {
   build() {
     Column({ space: 4 }) {
       Text(this.label)
-        .fontSize(14)
+        .fontSize(12)
         .fontWeight(FontWeight.Medium)
         .fontColor($r('app.color.vault_secondary_text'))
         .width('100%')
@@ -39,10 +39,10 @@ export struct CipherDetailTextItem {
         if (this.isEditable) {
           TextInput({ text: this.content })
             .accessibilityText(this.getAccessibilityLabel())
-            .fontSize(14)
+            .fontSize(16)
             .layoutWeight(1)
             .margin({ right: 8 })
-            .height(44)
+            .height(48)
             .backgroundColor($r('app.color.vault_detail_background'))
             .borderWidth(1)
             .borderColor($r('app.color.vault_divider_color'))
@@ -74,7 +74,7 @@ export struct CipherDetailTextItem {
           }
         } else {
           Text(this.content ? (this.showContent ? this.content : this.placeholder) : '')
-            .fontSize(14)
+            .fontSize(16)
             .layoutWeight(1)
         }
 

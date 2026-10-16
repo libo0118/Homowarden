@@ -131,8 +131,9 @@ export struct SettingsPage {
             // 安全设置
             Column() {
               Text($r('app.string.settings_security'))
-                .fontSize(16)
+                .fontSize(12)
                 .fontWeight(FontWeight.Medium)
+                .fontColor($r('app.color.brand_accent_color'))
                 .margin({ bottom: 12 })
 
               Row() {
@@ -258,8 +259,9 @@ export struct SettingsPage {
             // 账户设置
             Column() {
               Text($r('app.string.settings_account'))
-                .fontSize(16)
+                .fontSize(12)
                 .fontWeight(FontWeight.Medium)
+                .fontColor($r('app.color.brand_accent_color'))
                 .margin({ bottom: 12 })
 
               Row() {
@@ -352,8 +354,9 @@ export struct SettingsPage {
             // 关于
             Column() {
               Text($r('app.string.settings_about'))
-                .fontSize(16)
+                .fontSize(12)
                 .fontWeight(FontWeight.Medium)
+                .fontColor($r('app.color.brand_accent_color'))
                 .margin({ bottom: 12 })
 
               Row() {

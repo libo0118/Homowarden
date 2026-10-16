@@ -57,7 +57,7 @@ export struct AppDropdown {
     Select(this.selectOptions())
       .selected(this.selectedIndex())
       .value(this.selectedText())
-      .font({ size: 14, weight: FontWeight.Regular })
+      .font({ size: 16, weight: FontWeight.Regular })
       .selectedOptionFont({ size: this.optionFontSize, weight: FontWeight.Regular })
       .selectedOptionFontColor($r('app.color.brand_accent_color'))
       .optionFont({ size: this.optionFontSize, weight: FontWeight.Regular })
@@ -65,7 +65,7 @@ export struct AppDropdown {
       .menuBackgroundBlurStyle(BlurStyle.NONE)
       .enabled(!this.disabled)
       .width('100%')
-      .height(40)
+      .height(48)
       .accessibilityText(this.resolvedAccessibilityLabel())
       .onSelect((index: number) => {
         // 对外回传稳定业务值，调用方不依赖选项顺序

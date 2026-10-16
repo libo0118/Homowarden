@@ -23,8 +23,8 @@ export struct CipherItem {
   @Builder
   CipherTypeIcon() {
     Image(this.getTypeIcon())
-      .width(28)
-      .height(28)
+      .width(22)
+      .height(22)
       .objectFit(ImageFit.Contain)
       .margin({ right: 12 })
       .accessibilityLevel('no')
@@ -136,13 +136,13 @@ export struct CipherItem {
         // 内容区域
         Column() {
           Text(this.getDisplayName())
-            .fontSize(16)
+            .fontSize(14)
             .fontWeight(FontWeight.Medium)
             .maxLines(1)
             .textOverflow({ overflow: TextOverflow.Ellipsis })
 
           Text(this.getDisplaySubtitle())
-            .fontSize(14)
+            .fontSize(12)
             .fontColor($r('app.color.vault_secondary_text'))
             .maxLines(1)
             .textOverflow({ overflow: TextOverflow.Ellipsis })
@@ -176,7 +176,7 @@ export struct CipherItem {
       })
     }
     .width('100%')
-    .padding({ left: 16, right: 16, top: 12, bottom: 12 })
+    .padding({ left: 16, right: 16, top: 10, bottom: 10 })
     .backgroundColor($r('app.color.vault_list_background'))
     .borderWidth({ bottom: 1 })
     .borderColor($r('app.color.vault_divider_color'))

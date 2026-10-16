@@ -28,7 +28,7 @@ export struct CipherDetailDropdownItem {
   build() {
     Column({ space: 4 }) {
       Text(this.label)
-        .fontSize(14)
+        .fontSize(12)
         .fontWeight(FontWeight.Medium)
         .fontColor($r('app.color.vault_secondary_text'))
         .width('100%')
@@ -46,7 +46,7 @@ export struct CipherDetailDropdownItem {
         })
       } else {
         Text(this.content)
-          .fontSize(14)
+          .fontSize(16)
           .width('100%')
       }
     }

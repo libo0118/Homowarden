@@ -240,14 +240,13 @@ export struct GeneratorPage {
         })
       }
       .width('100%')
-      .padding({ left: 8, right: 16 })
-      .margin({ top: 12, bottom: 12 })
+      .margin({ top: 8, bottom: 8 })
 
       // 输出行：生成值 + 生成 + 复制
       Row() {
         Text(this.output.length > 0 ? this.output : $r('app.string.generator_empty'))
           .layoutWeight(1)
-          .fontSize(18)
+          .fontSize(16)
           .fontFamily('monospace')
           .maxLines(2)
           .textOverflow({ overflow: TextOverflow.Ellipsis })
@@ -280,7 +279,7 @@ export struct GeneratorPage {
         })
       }
       .width('100%')
-      .padding(16)
+      .padding({ left: 12, right: 8, top: 4, bottom: 4 })
       .borderRadius(6)
       .backgroundColor($r('app.color.vault_list_background'))
 

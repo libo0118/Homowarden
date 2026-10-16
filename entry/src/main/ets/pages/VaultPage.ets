@@ -349,10 +349,10 @@ struct VaultContent {
   categoryRow(label: Resource, icon: Resource, count: number, type: FilterType) {
     Column() {
       Row({ space: 12 }) {
-        Image(icon).width(24).height(24)
-        Text(label).fontSize(16).layoutWeight(1)
-        Text(count.toString()).fontSize(14).fontColor($r('app.color.vault_secondary_text'))
-        Text('›').fontSize(20).fontColor($r('app.color.vault_secondary_text'))
+        Image(icon).width(18).height(18)
+        Text(label).fontSize(14).layoutWeight(1)
+        Text(count.toString()).fontSize(12).fontColor($r('app.color.vault_secondary_text'))
+        Text('›').fontSize(18).fontColor($r('app.color.vault_secondary_text'))
       }
       .width('100%')
       .height(56)

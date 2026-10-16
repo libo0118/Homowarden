@@ -102,14 +102,14 @@ export struct TotpListItem {
       Row() {
         Column() {
           Text(this.cipher.name)
-            .fontSize(16)
+            .fontSize(14)
             .fontWeight(FontWeight.Medium)
             .maxLines(1)
             .textOverflow({ overflow: TextOverflow.Ellipsis })
 
           if (this.cipher.login?.username) {
             Text(this.cipher.login.username)
-              .fontSize(14)
+              .fontSize(12)
               .fontColor($r('app.color.vault_secondary_text'))
               .maxLines(1)
               .textOverflow({ overflow: TextOverflow.Ellipsis })
@@ -120,7 +120,7 @@ export struct TotpListItem {
         .layoutWeight(1)
       }
       .width('100%')
-      .margin({ bottom: 12 })
+      .margin({ bottom: 8 })
       .accessibilityGroup(true)
       .onClick(() => {
         this.onTap?.();
@@ -173,7 +173,7 @@ export struct TotpListItem {
       .width('100%')
     }
     .width('100%')
-    .padding(16)
+    .padding(12)
     .borderRadius(8)
     .margin({ bottom: 8 })
   }
