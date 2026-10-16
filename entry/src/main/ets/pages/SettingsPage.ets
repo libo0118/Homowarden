@@ -39,6 +39,7 @@ export struct SettingsPage {
   @State screenCaptureProtectionEnabled: boolean = true;
   @State antiPeepProtectionEnabled: boolean = false;
   @State syncEnabled: boolean = true;
+  @StorageLink('mobileSettingsPanel') settingsPanel: number = 0;
   onLockVault: () => void = () => {};
   onLogout: () => void = () => {};
   onOpenShare: () => void = () => {};
@@ -89,6 +90,8 @@ export struct SettingsPage {
     if (this.isActive) {
       // Tabs 页面重新激活时不会重建组件，需要主动同步可能由其他页面修改的设置
       this.refreshSettings();
+    } else {
+      this.settingsPanel = 0;
     }
   }
 
@@ -124,11 +127,100 @@ export struct SettingsPage {
     }
   }
 
+  @Builder
+  private settingsPushRow(label: ResourceStr, icon: Resource, action: () => void) {
+    Row() {
+      Image(icon)
+        .width(24)
+        .height(24)
+        .fillColor($r('sys.color.icon_primary'))
+        .margin({ right: 12 })
+      Text(label)
+        .fontSize(15)
+        .fontColor($r('sys.color.font_primary'))
+        .layoutWeight(1)
+      Path()
+        .width(16)
+        .height(16)
+        .commands('M6 3 L11 8 L6 13')
+        .fill(Color.Transparent)
+        .stroke($r('sys.color.icon_primary'))
+        .strokeWidth(1.5)
+    }
+    .width('100%')
+    .constraintSize({ minHeight: 60 })
+    .padding({ left: 12, right: 20, top: 6, bottom: 6 })
+    .accessibilityText(label)
+    .onClick(action)
+  }
+
+  @Builder
+  private settingsRowDivider() {
+    Row() {
+      Divider().color($r('app.color.vault_divider_color')).strokeWidth(1)
+    }
+    .width('100%')
+    .padding({ left: 48 })
+  }
+
+  @Builder
+  private mobileSettingsRoot() {
+    Scroll() {
+      Column() {
+        Column() {
+          this.settingsPushRow($r('app.string.settings_security'), $r('app.media.icon_key'), () => {
+            this.settingsPanel = 1;
+          })
+          this.settingsRowDivider()
+          this.settingsPushRow($r('app.string.settings_account'), $r('app.media.icon_cipher_identity'), () => {
+            this.settingsPanel = 2;
+          })
+          this.settingsRowDivider()
+          this.settingsPushRow($r('app.string.settings_about'), $r('app.media.icon_settings'), () => {
+            this.settingsPanel = 3;
+          })
+          this.settingsRowDivider()
+          this.settingsPushRow($r('app.string.nav_share'), $r('app.media.icon_nav_share'), () => {
+            this.onOpenShare();
+          })
+          this.settingsRowDivider()
+          this.settingsPushRow($r('app.string.share_history_title'), $r('app.media.icon_history'), () => {
+            this.onOpenShareHistory();
+          })
+        }
+        .width('100%')
+        .backgroundColor($r('app.color.menu_background_color'))
+        .borderRadius(16)
+        .clip(true)
+        Row().height(this.bottomContentInset + 16)
+      }
+      .width('100%')
+      .padding({ left: 16, right: 16, top: 12 })
+    }
+    .layoutWeight(1)
+    .align(Alignment.TopStart)
+  }
+
   build() {
+    Column() {
+      if (!this.isPc && this.settingsPanel === 0) {
+        this.mobileSettingsRoot()
+      } else {
+        this.settingsSections()
+      }
+    }
+    .width('100%')
+    .height('100%')
+    .backgroundColor($r('app.color.start_window_background'))
+  }
+
+  @Builder
+  private settingsSections() {
     Column() {
         Scroll() {
           Column() {
             // 安全设置
+            if (this.isPc || this.settingsPanel === 1) {
             Column() {
               Text($r('app.string.settings_security'))
                 .fontSize(12)
@@ -255,8 +347,10 @@ export struct SettingsPage {
             .width('100%')
             .padding(16)
             .margin({ bottom: 8 })
+            }
 
             // 账户设置
+            if (this.isPc || this.settingsPanel === 2) {
             Column() {
               Text($r('app.string.settings_account'))
                 .fontSize(12)
@@ -292,6 +386,7 @@ export struct SettingsPage {
               .width('100%')
               .padding({ top: 4, bottom: 12 })
 
+              if (this.isPc) {
               Row({ space: 12 }) {
                 Image($r('app.media.icon_nav_share')).width(20).height(20)
                 Text($r('app.string.nav_share')).fontSize(16)
@@ -313,6 +408,7 @@ export struct SettingsPage {
               .padding({ top: 12, bottom: 12 })
               .accessibilityText($r('app.string.share_history_title'))
               .onClick(() => this.onOpenShareHistory())
+              }
 
               Column() {
                 AdaptiveTextButton({
@@ -350,8 +446,10 @@ export struct SettingsPage {
             .width('100%')
             .padding(16)
             .margin({ bottom: 8 })
+            }
 
             // 关于
+            if (this.isPc || this.settingsPanel === 3) {
             Column() {
               Text($r('app.string.settings_about'))
                 .fontSize(12)
@@ -426,6 +524,7 @@ export struct SettingsPage {
             .width('100%')
             .padding(16)
             .margin({ bottom: 8 })
+            }
 
             Row()
               .width('100%')
@@ -438,7 +537,7 @@ export struct SettingsPage {
         .align(Alignment.TopStart)
     }
     .width('100%')
-    .height('100%')
+    .layoutWeight(1)
   }
 
   openEmail() {

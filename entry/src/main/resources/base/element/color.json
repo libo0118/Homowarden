@@ -46,7 +46,7 @@
     },
     {
       "name": "main_nav_unselected",
-      "value": "#667085"
+      "value": "#5A6D91"
     },
     {
       "name": "main_nav_disabled",
@@ -74,11 +74,11 @@
     },
     {
       "name": "vault_divider_color",
-      "value": "#D8E2EB"
+      "value": "#D3D9E3"
     },
     {
       "name": "vault_secondary_text",
-      "value": "#667085"
+      "value": "#5A6D91"
     }
   ]
 }

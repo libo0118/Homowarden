@@ -8,7 +8,7 @@ import { FormDialog } from '../component/FormDialog';
 import { ConfirmDialog } from '../component/ConfirmDialog';
 import { DataPreferences } from '@abner/datastore';
 import {
-  CipherItemType, FilterType, LOGIN_STATUS_KEY, NEED_RELOAD_CIPHERS
+  CipherItemType, EMAIL_KEY, FilterType, LOGIN_STATUS_KEY, NEED_RELOAD_CIPHERS
 } from '../utils/Constants';
 import { CipherCopyField, CipherItem } from '../component/CipherItem';
 import {
@@ -36,6 +36,7 @@ import { Logger } from '@nzy/logger';
 import { TOTPUtil } from '../utils/TOTPUtil';
 import { promptAction } from '@kit.ArkUI';
 import { FormFactorUtil } from '../utils/FormFactorUtil';
+import { queryAssetSync } from '../utils/AssetUtil';
 
 const COMPACT_TAB_CONTENT_INSET = 0;
 
@@ -61,6 +62,11 @@ struct VaultContent {
   @Prop @Watch('handleManualRefreshRevision') manualRefreshRevision: number = 0;
   @Prop pullToRefreshEnabled: boolean = true;
   @Prop bottomContentInset: number = 0;
+  @Prop compactLayout: boolean = false;
+  @Prop showSearchBar: boolean = true;
+  @Prop @Watch('handleRequestedFilter') requestedFilter: FilterType = FilterType.ALL;
+  @Prop @Watch('handleSearchReset') searchResetRevision: number = 0;
+  onFilterChanged: (type: FilterType) => void = () => {};
   onVaultDataChanged: (ciphers: Cipher[], symmetricKey: string) => void = () => {};
   onNavigateToDetail: (params: CipherDetailParams) => void = () => {};
   onRelogin: () => void = () => {};
@@ -117,6 +123,7 @@ struct VaultContent {
   });
 
   async aboutToAppear(): Promise<void> {
+    this.selectedType = this.requestedFilter;
     await this.loadCiphersWithBackgroundSync();
     this.consumeCommittedChange();
   }
@@ -136,6 +143,24 @@ struct VaultContent {
     if (!this.isLoading) {
       void this.loadCiphers(true);
     }
+  }
+
+  private handleRequestedFilter(): void {
+    if (this.selectedType !== this.requestedFilter) {
+      this.selectedType = this.requestedFilter;
+      this.applyCurrentFilter();
+    }
+  }
+
+  private handleSearchReset(): void {
+    this.searchText = '';
+    this.applyCurrentFilter();
+  }
+
+  private selectFilter(type: FilterType): void {
+    this.selectedType = type;
+    this.applyCurrentFilter();
+    this.onFilterChanged(type);
   }
 
   private handleCommittedChange(): void {
@@ -346,25 +371,25 @@ struct VaultContent {
   }
 
   @Builder
-  categoryRow(label: Resource, icon: Resource, count: number, type: FilterType) {
-    Column() {
-      Row({ space: 12 }) {
-        Image(icon).width(18).height(18)
-        Text(label).fontSize(14).layoutWeight(1)
-        Text(count.toString()).fontSize(12).fontColor($r('app.color.vault_secondary_text'))
-        Text('›').fontSize(18).fontColor($r('app.color.vault_secondary_text'))
+  categoryRow(label: Resource, icon: Resource, count: number, type: FilterType, showDivider: boolean = true) {
+    Stack({ alignContent: Alignment.Bottom }) {
+      Row({ space: 16 }) {
+        Image(icon).width(24).height(24).accessibilityLevel('no')
+        Text(label).fontSize(15).lineHeight(20).layoutWeight(1)
+        Text(count.toString()).fontSize(12).lineHeight(16)
       }
       .width('100%')
-      .height(56)
+      .constraintSize({ minHeight: 60 })
       .padding({ left: 16, right: 16 })
-      Divider().color($r('app.color.vault_divider_color')).margin({ left: 52 })
+      if (showDivider) {
+        Divider().color($r('app.color.vault_divider_color')).margin({ left: 56 })
+      }
     }
     .width('100%')
     .accessibilityGroup(true)
     .accessibilityText(label)
     .onClick(() => {
-      this.selectedType = type;
-      this.applyCurrentFilter();
+      this.selectFilter(type);
     })
   }
 
@@ -376,27 +401,41 @@ struct VaultContent {
       List({ scroller: this.listScroller }) {
         if (this.selectedType === FilterType.ALL && this.searchText.trim().length === 0) {
           ListItem() {
-            Text($r('app.string.cipher_type'))
+            Text() {
+              Span($r('app.string.cipher_type'))
+              Span(' (4)')
+            }
               .fontSize(12)
-              .fontWeight(FontWeight.Medium)
-              .fontColor($r('app.color.brand_accent_color'))
-              .padding({ left: 16, top: 12, bottom: 4 })
+              .lineHeight(18)
+              .fontWeight(FontWeight.Bold)
+              .letterSpacing(0.6)
+              .fontColor($r('app.color.vault_secondary_text'))
+              .padding({ left: 16, top: 12, bottom: 8 })
           }
           ListItem() {
-            this.categoryRow($r('app.string.vault_type_login'), $r('app.media.icon_cipher_login'),
-              this.viewModel.stats.login, FilterType.LOGINS)
+            Column() {
+              this.categoryRow($r('app.string.vault_type_login'), $r('app.media.icon_cipher_login'),
+                this.viewModel.stats.login, FilterType.LOGINS)
+              this.categoryRow($r('app.string.vault_type_card'), $r('app.media.icon_cipher_card'),
+                this.viewModel.stats.card, FilterType.CARDS)
+              this.categoryRow($r('app.string.vault_type_identity'), $r('app.media.icon_cipher_identity'),
+                this.viewModel.stats.identity, FilterType.IDENTITIES)
+              this.categoryRow($r('app.string.vault_type_note'), $r('app.media.icon_cipher_note'),
+                this.viewModel.stats.note, FilterType.NOTES, false)
+            }
+            .width('100%')
+            .backgroundColor($r('app.color.vault_list_background'))
+            .borderRadius(this.compactLayout ? 12 : 0)
+            .clip(true)
           }
           ListItem() {
-            this.categoryRow($r('app.string.vault_type_card'), $r('app.media.icon_cipher_card'),
-              this.viewModel.stats.card, FilterType.CARDS)
-          }
-          ListItem() {
-            this.categoryRow($r('app.string.vault_type_identity'), $r('app.media.icon_cipher_identity'),
-              this.viewModel.stats.identity, FilterType.IDENTITIES)
-          }
-          ListItem() {
-            this.categoryRow($r('app.string.vault_type_note'), $r('app.media.icon_cipher_note'),
-              this.viewModel.stats.note, FilterType.NOTES)
+            Text($r('app.string.vault_filter_all', this.displayCiphers.length))
+              .fontSize(12)
+              .lineHeight(18)
+              .fontWeight(FontWeight.Bold)
+              .letterSpacing(0.6)
+              .fontColor($r('app.color.vault_secondary_text'))
+              .padding({ left: 16, top: 16, bottom: 8 })
           }
         }
         if (this.displayCiphers.length === 0) {
@@ -404,10 +443,13 @@ struct VaultContent {
             this.emptyContent()
           }
         } else {
-          ForEach(this.displayCiphers, (cipher: Cipher) => {
+          ForEach(this.displayCiphers, (cipher: Cipher, index: number) => {
             ListItem() {
               CipherItem({
                 cipher: cipher,
+                grouped: this.compactLayout,
+                firstInGroup: index === 0,
+                lastInGroup: index === this.displayCiphers.length - 1,
                 onTap: () => {
                   this.navigateToDetail(cipher);
                 },
@@ -431,7 +473,8 @@ struct VaultContent {
       }
       .width('100%')
       .height('100%')
-      .contentEndOffset(this.bottomContentInset)
+      .contentEndOffset(this.bottomContentInset + (this.compactLayout ? 88 : 0))
+      .padding({ left: this.compactLayout ? 16 : 0, right: this.compactLayout ? 16 : 0 })
       .edgeEffect(EdgeEffect.None)
     }
   }
@@ -442,17 +485,16 @@ struct VaultContent {
           if (this.isInitialLoading) {
             this.loadingContent()
           } else {
-            // 搜索栏
+            if (this.showSearchBar) {
             Row({ space: 8 }) {
               Column() {
                 AppDropdown({
                   options: this.filterOptions,
                   value: this.selectedType,
-                  optionFontSize: 12,
+                  optionFontSize: 15,
                   accessibilityLabel: $r('app.string.vault_title'),
                   onChange: (value: number) => {
-                    this.selectedType = value;
-                    this.applyCurrentFilter();
+                    this.selectFilter(value);
                   }
                 })
               }.width('36%')
@@ -461,6 +503,8 @@ struct VaultContent {
                 value: this.searchText,
                 placeholder: $r('app.string.vault_search_placeholder'),
               })
+                .height(48)
+                .fontSize(15)
                 .onChange((value: string) => {
                   this.searchText = value;
                   this.applyCurrentFilter();
@@ -469,6 +513,7 @@ struct VaultContent {
             }
             .width('100%')
             .padding({ left: 16, right: 16, bottom: 8 })
+            }
 
             if (this.pullToRefreshEnabled) {
               Refresh({ refreshing: this.isLoading, builder: this.refreshContent() }) {
@@ -497,7 +542,8 @@ struct VaultContent {
       }
       .width('100%')
       .height('100%')
-      .backgroundColor($r('app.color.vault_list_background'))
+      .backgroundColor(this.compactLayout ? $r('app.color.start_window_background') :
+        $r('app.color.vault_list_background'))
     }
 
   private navigateToDetail(cipher: Cipher): void {
@@ -776,12 +822,17 @@ export struct VaultPage {
   @StorageLink('localeRevision') localeRevision: number = 0;
   @StorageLink('isSplitView') @Watch('handleSplitViewChange') isSplitView: boolean = false;
   @StorageLink('activeSplitView') activeSplitView: boolean = false;
+  @StorageLink('mobileSettingsPanel') settingsPanel: number = 0;
   @State selectedMainTab: MainTab = MainTab.VAULT;
   @State sharedCiphers: Cipher[] = [];
   @State sharedSymmetricKey: string = '';
   @State vaultDataRevision: number = 0;
   @State vaultActivationRevision: number = 0;
   @State vaultManualRefreshRevision: number = 0;
+  @State showVaultSearch: boolean = false;
+  @State vaultFilterType: FilterType = FilterType.ALL;
+  @State vaultSearchResetRevision: number = 0;
+  @State accountInitials: string = 'H';
   private isPc: boolean = FormFactorUtil.isPc();
   private tabsController: HdsTabsController = new HdsTabsController();
   private exitTime: number = 0;
@@ -817,9 +868,18 @@ export struct VaultPage {
       return $r('app.string.generator_title');
     }
     if (this.selectedMainTab === MainTab.SETTINGS) {
+      if (this.settingsPanel === 1) {
+        return $r('app.string.settings_security');
+      }
+      if (this.settingsPanel === 2) {
+        return $r('app.string.settings_account');
+      }
+      if (this.settingsPanel === 3) {
+        return $r('app.string.settings_about');
+      }
       return $r('app.string.nav_settings');
     }
-    return $r('app.string.nav_vault');
+    return $r('app.string.vault_title');
   }
 
   private selectTab(tab: MainTab): void {
@@ -871,6 +931,26 @@ export struct VaultPage {
 
   private refreshVault(): void {
     this.vaultManualRefreshRevision++;
+  }
+
+  private resetVaultSearch(): void {
+    this.showVaultSearch = false;
+    this.vaultFilterType = FilterType.ALL;
+    this.vaultSearchResetRevision++;
+  }
+
+  private vaultOverflowItems(): MenuElement[] {
+    return [
+      { value: $r('app.string.common_refresh'), action: () => this.refreshVault() },
+      { value: $r('app.string.common_lock_now'), action: () => this.lockVault() }
+    ];
+  }
+
+  private accountMenuItems(): MenuElement[] {
+    return [
+      { value: $r('app.string.nav_settings'), action: () => this.selectTab(MainTab.SETTINGS) },
+      { value: $r('app.string.common_lock_now'), action: () => this.lockVault() }
+    ];
   }
 
   private updateVaultData(ciphers: Cipher[], symmetricKey: string): void {
@@ -979,6 +1059,13 @@ export struct VaultPage {
   private vaultContent(bottomContentInset: number) {
     VaultContent({
       bottomContentInset: bottomContentInset,
+      compactLayout: !this.activeSplitView && !this.isPc,
+      showSearchBar: this.activeSplitView || this.isPc || this.showVaultSearch || this.vaultFilterType !== FilterType.ALL,
+      requestedFilter: this.vaultFilterType,
+      searchResetRevision: this.vaultSearchResetRevision,
+      onFilterChanged: (type: FilterType) => {
+        this.vaultFilterType = type;
+      },
       activationRevision: this.vaultActivationRevision,
       manualRefreshRevision: this.vaultManualRefreshRevision,
       pullToRefreshEnabled: !this.isPc,
@@ -1009,16 +1096,121 @@ export struct VaultPage {
 
   @Builder
   private vaultAddButton() {
-    AdaptiveIconButton({
-      icon: $r('app.media.icon_add'),
-      accessibilityLabel: $r('app.string.cipher_add_title'),
-      iconWidth: 25,
-      iconHeight: 25,
-      contentPadding: 8,
-      barBottomMargin: 0,
-      buttonBackgroundColor: $r('app.color.brand_accent_color'),
-      onButtonClick: () => this.addCipher()
-    })
+    if (this.isPc) {
+      AdaptiveIconButton({
+        icon: $r('app.media.icon_add'),
+        accessibilityLabel: $r('app.string.cipher_add_title'),
+        iconWidth: 25,
+        iconHeight: 25,
+        contentPadding: 8,
+        barBottomMargin: 0,
+        buttonBackgroundColor: $r('app.color.brand_accent_color'),
+        onButtonClick: () => this.addCipher()
+      })
+    } else {
+      Button() {
+        Image($r('app.media.icon_add'))
+          .width(24).height(24)
+          .fillColor($r('app.color.button_foreground_color'))
+          .accessibilityLevel('no')
+      }
+      .type(ButtonType.Normal)
+      .width(56).height(56)
+      .padding(0)
+      .borderRadius(16)
+      .backgroundColor($r('app.color.button_background_color'))
+      .accessibilityText($r('app.string.cipher_add_title'))
+      .onClick(() => this.addCipher())
+    }
+  }
+
+  @Builder
+  private compactTopBar() {
+    Row() {
+      if (this.selectedMainTab === MainTab.SETTINGS && this.settingsPanel !== 0) {
+        Button() {
+          Text('‹').fontSize(32).fontColor($r('sys.color.icon_primary'))
+        }
+        .width(48).height(48)
+        .padding(0)
+        .buttonStyle(ButtonStyleMode.TEXTUAL)
+        .accessibilityText($r('app.string.nav_settings'))
+        .onClick(() => { this.settingsPanel = 0; })
+      } else if (this.selectedMainTab === MainTab.VAULT &&
+        (this.showVaultSearch || this.vaultFilterType !== FilterType.ALL)) {
+        Button() {
+          Text('‹').fontSize(32).fontColor($r('sys.color.icon_primary'))
+        }
+        .width(48).height(48)
+        .padding(0)
+        .buttonStyle(ButtonStyleMode.TEXTUAL)
+        .accessibilityText($r('app.string.common_cancel'))
+        .onClick(() => this.resetVaultSearch())
+      }
+      Text(this.getTitle())
+        .fontSize(this.selectedMainTab === MainTab.SETTINGS && this.settingsPanel !== 0 ? 19 : 28)
+        .lineHeight(this.selectedMainTab === MainTab.SETTINGS && this.settingsPanel !== 0 ? 24 : 36)
+        .fontWeight(600)
+        .maxLines(1)
+        .textOverflow({ overflow: TextOverflow.Ellipsis })
+        .layoutWeight(1)
+      if (this.selectedMainTab === MainTab.VAULT) {
+        Button() {
+          Text(this.accountInitials)
+            .fontSize(12)
+            .fontWeight(600)
+            .fontColor($r('app.color.button_foreground_color'))
+            .width(28).height(28)
+            .textAlign(TextAlign.Center)
+            .backgroundColor($r('app.color.button_background_color'))
+            .borderRadius(14)
+        }
+        .width(48).height(48)
+        .padding(0)
+        .buttonStyle(ButtonStyleMode.TEXTUAL)
+        .accessibilityText($r('app.string.settings_account'))
+        .bindMenu(this.accountMenuItems(), {
+          backgroundColor: $r('app.color.menu_background_color'),
+          backgroundBlurStyle: BlurStyle.NONE
+        })
+        if (!this.showVaultSearch) {
+          Button() {
+            Image($r('app.media.icon_search')).width(24).height(24)
+          }
+          .width(48).height(48)
+          .padding(0)
+          .buttonStyle(ButtonStyleMode.TEXTUAL)
+          .accessibilityText($r('app.string.vault_search_placeholder'))
+          .onClick(() => {
+            this.showVaultSearch = true;
+          })
+        }
+        Button() {
+          Text('\u22ee').fontSize(24).fontColor($r('sys.color.icon_primary'))
+        }
+        .width(48).height(48)
+        .padding(0)
+        .buttonStyle(ButtonStyleMode.TEXTUAL)
+        .accessibilityText($r('app.string.vault_item_menu'))
+        .bindMenu(this.vaultOverflowItems(), {
+          backgroundColor: $r('app.color.menu_background_color'),
+          backgroundBlurStyle: BlurStyle.NONE
+        })
+      } else if (this.selectedMainTab === MainTab.GENERATOR) {
+        Button() {
+          Image($r('app.media.icon_history')).width(24).height(24)
+        }
+        .width(48).height(48)
+        .padding(0)
+        .buttonStyle(ButtonStyleMode.TEXTUAL)
+        .accessibilityText($r('app.string.common_history'))
+        .onClick(() => this.openDetail(EntryRouter.GeneratorHistoryPage))
+      }
+    }
+    .width('100%')
+    .height(this.selectedMainTab === MainTab.SETTINGS && this.settingsPanel !== 0 ? 48 : 56)
+    .padding({ left: 16, right: 4 })
+    .backgroundColor($r('app.color.start_window_background'))
   }
 
   @Builder
@@ -1138,6 +1330,10 @@ export struct VaultPage {
 
   @Builder
   private compactContent() {
+    Column() {
+      if (!this.isPc) {
+        this.compactTopBar()
+      }
     Stack({ alignContent: Alignment.BottomEnd }) {
       HdsTabs({ barPosition: BarPosition.End, index: this.selectedMainTab, controller: this.tabsController }) {
         TabContent() {
@@ -1189,6 +1385,9 @@ export struct VaultPage {
       }
     }
     .width('100%')
+    .layoutWeight(1)
+    }
+    .width('100%')
     .height('100%')
   }
 
@@ -1217,7 +1416,7 @@ export struct VaultPage {
         }
       }
     })
-    .hideTitleBar(this.activeSplitView)
+    .hideTitleBar(this.activeSplitView || !this.isPc)
     .hideBackButton(true)
     .onReady((ctx: NavDestinationContext) => {
       this.pathInfos = ctx.pathStack;
@@ -1229,6 +1428,8 @@ export struct VaultPage {
       this.applyPendingSplitViewChange();
     })
     .onAppear(() => {
+      this.settingsPanel = 0;
+      this.accountInitials = queryAssetSync(EMAIL_KEY).slice(0, 2).toUpperCase() || 'H';
       this.activeSplitView = this.isSplitView;
       DetailRouter.registerCloseHandler(this.closeDetailHandler);
       // onAppear 可能处于 ArkUI 初始渲染流水线中，延迟初始化详情栈，避免同步修改
@@ -1242,6 +1443,15 @@ export struct VaultPage {
       }, 0);
     })
     .onBackPressed(() => {
+      if (this.selectedMainTab === MainTab.SETTINGS && this.settingsPanel !== 0) {
+        this.settingsPanel = 0;
+        return true;
+      }
+      if (this.selectedMainTab === MainTab.VAULT &&
+        (this.showVaultSearch || this.vaultFilterType !== FilterType.ALL)) {
+        this.resetVaultSearch();
+        return true;
+      }
       const currentTime = Date.now();
       if (currentTime - this.exitTime < 2000) {
         (this.getUIContext().getHostContext() as common.UIAbilityContext)?.terminateSelf();

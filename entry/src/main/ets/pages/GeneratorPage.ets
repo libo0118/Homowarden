@@ -23,6 +23,7 @@ const MIN_COUNT_MIN: number = 0;
 @Component
 export struct GeneratorPage {
   @Prop bottomContentInset: number = 0;
+  @StorageLink('activeSplitView') activeSplitView: boolean = false;
   @State activeSubTabIndexes: number[] = [0];
   @State private subTabOptions: SegmentButtonOptions = SegmentButtonOptions.capsule({
     buttons: [
@@ -33,6 +34,19 @@ export struct GeneratorPage {
     selectedBackgroundColor: $r('app.color.brand_accent_color'),
     selectedFontColor: $r('app.color.button_foreground_color'),
     buttonPadding: { top: 12, right: 8, bottom: 12, left: 8 }
+  });
+  @State private mobileSubTabOptions: SegmentButtonOptions = SegmentButtonOptions.capsule({
+    buttons: [
+      { text: $r('app.string.generator_tab_password') },
+      { text: $r('app.string.generator_tab_username') }
+    ] as SegmentButtonItemTuple,
+    multiply: false,
+    fontSize: 14,
+    selectedFontSize: 14,
+    backgroundColor: $r('app.color.vault_list_background'),
+    selectedBackgroundColor: $r('app.color.brand_accent_color'),
+    selectedFontColor: $r('app.color.button_foreground_color'),
+    buttonPadding: { top: 10, right: 8, bottom: 10, left: 8 }
   });
 
   // 密码模式状态
@@ -230,7 +244,7 @@ export struct GeneratorPage {
       // 分段切换：密码 / 用户名
       Column() {
         SegmentButton({
-          options: this.subTabOptions,
+          options: this.activeSplitView ? this.subTabOptions : this.mobileSubTabOptions,
           selectedIndexes: $activeSubTabIndexes,
           onItemClicked: async (index: number) => {
             this.activeSubTabIndexes = [index];
@@ -240,17 +254,61 @@ export struct GeneratorPage {
         })
       }
       .width('100%')
-      .margin({ top: 8, bottom: 8 })
+      .padding({
+        left: this.activeSplitView ? 0 : 16,
+        right: this.activeSplitView ? 0 : 16,
+        top: this.activeSplitView ? 8 : 4,
+        bottom: 8
+      })
+      .backgroundColor(this.activeSplitView ? Color.Transparent : $r('app.color.start_window_background'))
 
-      // 输出行：生成值 + 生成 + 复制
-      Row() {
-        Text(this.output.length > 0 ? this.output : $r('app.string.generator_empty'))
-          .layoutWeight(1)
-          .fontSize(16)
-          .fontFamily('monospace')
-          .maxLines(2)
-          .textOverflow({ overflow: TextOverflow.Ellipsis })
+      if (this.activeSplitView) {
+        this.GeneratedOutput()
+      }
 
+      // 单一滚动容器承载当前模式的选项，短内容也顶对齐，避免被居中或遮挡
+      Scroll() {
+        Column() {
+          if (!this.activeSplitView) {
+            this.GeneratedOutput()
+          }
+          if (this.activeSubTabIndexes[0] === 0) {
+            this.PasswordControls()
+          } else {
+            this.UsernameControls()
+          }
+        }
+        .width('100%')
+        .padding({
+          left: this.activeSplitView ? 0 : 16,
+          right: this.activeSplitView ? 0 : 16,
+          top: this.activeSplitView ? 0 : 12
+        })
+      }
+      .scrollBar(BarState.Auto)
+      .scrollable(ScrollDirection.Vertical)
+      .align(Alignment.TopStart)
+      .width('100%')
+      .layoutWeight(1)
+    }
+    .width('100%')
+    .height('100%')
+    .padding({ left: this.activeSplitView ? 16 : 0, right: this.activeSplitView ? 16 : 0 })
+    .backgroundColor(this.activeSplitView ? Color.Transparent : $r('app.color.start_window_background'))
+  }
+
+  @Builder
+  GeneratedOutput() {
+    Row() {
+      Text(this.output.length > 0 ? this.output : $r('app.string.generator_empty'))
+        .layoutWeight(1)
+        .fontSize(this.activeSplitView ? 16 : 14)
+        .lineHeight(this.activeSplitView ? 24 : 20)
+        .fontFamily('monospace')
+        .maxLines(this.activeSplitView ? 2 : 6)
+        .textOverflow({ overflow: TextOverflow.Ellipsis })
+
+      if (this.activeSplitView) {
         AdaptiveIconButton({
           icon: $r('app.media.icon_restore'),
           accessibilityLabel: $r('app.string.accessibility_generate'),
@@ -277,40 +335,92 @@ export struct GeneratorPage {
             await this.copyOutput();
           }
         })
-      }
-      .width('100%')
-      .padding({ left: 12, right: 8, top: 4, bottom: 4 })
-      .borderRadius(6)
-      .backgroundColor($r('app.color.vault_list_background'))
-
-      // 单一滚动容器承载当前模式的选项，短内容也顶对齐，避免被居中或遮挡
-      Scroll() {
-        if (this.activeSubTabIndexes[0] === 0) {
-          this.PasswordControls()
-        } else {
-          this.UsernameControls()
+      } else {
+        Button() {
+          Image($r('app.media.icon_restore'))
+            .width(24)
+            .height(24)
+            .fillColor($r('app.color.vault_secondary_text'))
+            .accessibilityLevel('no')
         }
+        .type(ButtonType.Circle)
+        .width(48)
+        .height(48)
+        .padding(12)
+        .backgroundColor(Color.Transparent)
+        .accessibilityText($r('app.string.accessibility_generate'))
+        .onClick(async () => {
+          await this.regenerate();
+        })
+        Button() {
+          Image($r('app.media.icon_copy'))
+            .width(24)
+            .height(24)
+            .fillColor($r('app.color.vault_secondary_text'))
+            .accessibilityLevel('no')
+        }
+        .type(ButtonType.Circle)
+        .width(48)
+        .height(48)
+        .padding(12)
+        .backgroundColor(Color.Transparent)
+        .accessibilityText($r('app.string.accessibility_copy_generated'))
+        .onClick(async () => {
+          await this.copyOutput();
+        })
       }
-      .scrollBar(BarState.Auto)
-      .scrollable(ScrollDirection.Vertical)
-      .align(Alignment.TopStart)
-      .width('100%')
-      .layoutWeight(1)
     }
     .width('100%')
-    .height('100%')
-    .padding({ left: 16, right: 16 })
+    .constraintSize({ minHeight: this.activeSplitView ? 0 : 60 })
+    .padding({ left: this.activeSplitView ? 12 : 16, right: 8, top: 4, bottom: 4 })
+    .borderRadius(this.activeSplitView ? 6 : 16)
+    .backgroundColor($r('app.color.vault_list_background'))
+    .margin({ bottom: this.activeSplitView ? 0 : 12 })
+  }
+
+  @Builder
+  StepperAction(icon: Resource, label: Resource, onAction: () => void) {
+    if (this.activeSplitView) {
+      AdaptiveIconButton({
+        icon: icon,
+        accessibilityLabel: label,
+        barWidth: 36,
+        barHeight: 36,
+        iconWidth: 16,
+        iconHeight: 16,
+        contentPadding: 4,
+        barBottomMargin: 0,
+        onButtonClick: onAction
+      })
+    } else {
+      Button() {
+        Image(icon)
+          .width(24)
+          .height(24)
+          .fillColor($r('app.color.vault_secondary_text'))
+          .accessibilityLevel('no')
+      }
+      .type(ButtonType.Circle)
+      .width(48)
+      .height(48)
+      .padding(12)
+      .backgroundColor(Color.Transparent)
+      .accessibilityText(label)
+      .onClick(() => {
+        onAction();
+      })
+    }
   }
 
   @Builder
   PasswordControls() {
-    Column({ space: 16 }) {
+    Column({ space: this.activeSplitView ? 16 : 0 }) {
       // 长度进度条
       Column({ space: 8 }) {
         Row() {
           Text($r('app.string.password_length'))
-            .fontSize(14)
-            .fontColor($r('app.color.vault_secondary_text'))
+            .fontSize(this.activeSplitView ? 14 : 15)
+            .fontColor(this.activeSplitView ? $r('app.color.vault_secondary_text') : $r('sys.color.font_primary'))
           Blank()
           Text(`${this.length}`)
             .fontSize(16)
@@ -328,7 +438,7 @@ export struct GeneratorPage {
           .width('100%')
           .blockColor($r('app.color.button_background_color'))
           .selectedColor($r('app.color.button_background_color'))
-          .trackColor('#E0E0E0')
+          .trackColor($r('app.color.vault_divider_color'))
           .accessibilityText($r('app.string.accessibility_password_length'))
           .onChange(async (value: number, mode: SliderChangeMode) => {
             this.updatePasswordLength(value);
@@ -340,11 +450,15 @@ export struct GeneratorPage {
           })
       }
       .width('100%')
+      .padding(this.activeSplitView ? 0 : 16)
+      .borderRadius(this.activeSplitView ? 0 : 16)
+      .backgroundColor(this.activeSplitView ? Color.Transparent : $r('app.color.vault_list_background'))
+      .margin({ bottom: this.activeSplitView ? 0 : 8 })
 
       // 字符类型开关（直接引用 this.xxx 以建立状态观察）
       Row() {
         Text($r('app.string.password_uppercase'))
-          .fontSize(16)
+          .fontSize(this.activeSplitView ? 16 : 15)
           .layoutWeight(1)
         Toggle({ type: ToggleType.Switch, isOn: this.upperOn })
           .selectedColor($r('app.color.brand_accent_color'))
@@ -355,11 +469,14 @@ export struct GeneratorPage {
           })
       }
       .width('100%')
-      .padding({ top: 8, bottom: 8 })
+      .constraintSize({ minHeight: this.activeSplitView ? 0 : 60 })
+      .padding({ left: this.activeSplitView ? 0 : 16, right: this.activeSplitView ? 0 : 12, top: 8, bottom: 8 })
+      .backgroundColor(this.activeSplitView ? Color.Transparent : $r('app.color.vault_list_background'))
+      .borderRadius({ topLeft: this.activeSplitView ? 0 : 16, topRight: this.activeSplitView ? 0 : 16 })
 
       Row() {
         Text($r('app.string.password_lowercase'))
-          .fontSize(16)
+          .fontSize(this.activeSplitView ? 16 : 15)
           .layoutWeight(1)
         Toggle({ type: ToggleType.Switch, isOn: this.lowerOn })
           .selectedColor($r('app.color.brand_accent_color'))
@@ -370,11 +487,13 @@ export struct GeneratorPage {
           })
       }
       .width('100%')
-      .padding({ top: 8, bottom: 8 })
+      .constraintSize({ minHeight: this.activeSplitView ? 0 : 60 })
+      .padding({ left: this.activeSplitView ? 0 : 16, right: this.activeSplitView ? 0 : 12, top: 8, bottom: 8 })
+      .backgroundColor(this.activeSplitView ? Color.Transparent : $r('app.color.vault_list_background'))
 
       Row() {
         Text($r('app.string.password_digits'))
-          .fontSize(16)
+          .fontSize(this.activeSplitView ? 16 : 15)
           .layoutWeight(1)
         Toggle({ type: ToggleType.Switch, isOn: this.digitOn })
           .selectedColor($r('app.color.brand_accent_color'))
@@ -385,11 +504,13 @@ export struct GeneratorPage {
           })
       }
       .width('100%')
-      .padding({ top: 8, bottom: 8 })
+      .constraintSize({ minHeight: this.activeSplitView ? 0 : 60 })
+      .padding({ left: this.activeSplitView ? 0 : 16, right: this.activeSplitView ? 0 : 12, top: 8, bottom: 8 })
+      .backgroundColor(this.activeSplitView ? Color.Transparent : $r('app.color.vault_list_background'))
 
       Row() {
         Text($r('app.string.password_symbols'))
-          .fontSize(16)
+          .fontSize(this.activeSplitView ? 16 : 15)
           .layoutWeight(1)
         Toggle({ type: ToggleType.Switch, isOn: this.symbolOn })
           .selectedColor($r('app.color.brand_accent_color'))
@@ -400,103 +521,87 @@ export struct GeneratorPage {
           })
       }
       .width('100%')
-      .padding({ top: 8, bottom: 8 })
+      .constraintSize({ minHeight: this.activeSplitView ? 0 : 60 })
+      .padding({ left: this.activeSplitView ? 0 : 16, right: this.activeSplitView ? 0 : 12, top: 8, bottom: 8 })
+      .backgroundColor(this.activeSplitView ? Color.Transparent : $r('app.color.vault_list_background'))
+      .borderRadius({ bottomLeft: this.activeSplitView ? 0 : 16, bottomRight: this.activeSplitView ? 0 : 16 })
+      .margin({ bottom: this.activeSplitView ? 0 : 8 })
 
       // 数字最小个数步进
       Row() {
         Text($r('app.string.password_min_digits'))
-          .fontSize(16)
+          .fontSize(this.activeSplitView ? 16 : 15)
           .layoutWeight(1)
-        Row({ space: 8 }) {
-          AdaptiveIconButton({
-            icon: $r('app.media.icon_minus'),
-            accessibilityLabel: $r('app.string.accessibility_decrease_min_digits'),
-            barWidth: 36,
-            barHeight: 36,
-            iconWidth: 16,
-            iconHeight: 16,
-            contentPadding: 4,
-            barBottomMargin: 0,
-            onButtonClick: async () => {
-              if (this.digitOn) {
-                await this.adjustMinDigits(-1);
-              }
+        Row({ space: this.activeSplitView ? 8 : 4 }) {
+          this.StepperAction($r('app.media.icon_minus'),
+            $r('app.string.accessibility_decrease_min_digits'), async () => {
+            if (this.digitOn) {
+              await this.adjustMinDigits(-1);
             }
-          })
+            })
           Text(`${this.minDigits}`)
-            .fontSize(16)
+            .fontSize(this.activeSplitView ? 16 : 15)
             .fontWeight(FontWeight.Medium)
             .textAlign(TextAlign.Center)
-            .width(40)
+            .width(this.activeSplitView ? 40 : 32)
             .opacity(this.digitOn ? 1 : 0.4)
-          AdaptiveIconButton({
-            icon: $r('app.media.icon_add'),
-            accessibilityLabel: $r('app.string.accessibility_increase_min_digits'),
-            barWidth: 36,
-            barHeight: 36,
-            iconWidth: 16,
-            iconHeight: 16,
-            contentPadding: 4,
-            barBottomMargin: 0,
-            onButtonClick: async () => {
-              if (this.digitOn) {
-                await this.adjustMinDigits(1);
-              }
+          this.StepperAction($r('app.media.icon_add'),
+            $r('app.string.accessibility_increase_min_digits'), async () => {
+            if (this.digitOn) {
+              await this.adjustMinDigits(1);
             }
-          })
+            })
         }
         .opacity(this.digitOn ? 1 : 0.4)
       }
       .width('100%')
-      .padding({ top: 8, bottom: 8 })
+      .constraintSize({ minHeight: this.activeSplitView ? 0 : 60 })
+      .padding({
+        left: this.activeSplitView ? 0 : 16,
+        right: this.activeSplitView ? 0 : 12,
+        top: this.activeSplitView ? 8 : 6,
+        bottom: this.activeSplitView ? 8 : 6
+      })
+      .backgroundColor(this.activeSplitView ? Color.Transparent : $r('app.color.vault_list_background'))
+      .borderRadius({ topLeft: this.activeSplitView ? 0 : 16, topRight: this.activeSplitView ? 0 : 16 })
 
       // 符号最小个数步进
       Row() {
         Text($r('app.string.password_min_symbols'))
-          .fontSize(16)
+          .fontSize(this.activeSplitView ? 16 : 15)
           .layoutWeight(1)
-        Row({ space: 8 }) {
-          AdaptiveIconButton({
-            icon: $r('app.media.icon_minus'),
-            accessibilityLabel: $r('app.string.accessibility_decrease_min_symbols'),
-            barWidth: 36,
-            barHeight: 36,
-            iconWidth: 16,
-            iconHeight: 16,
-            contentPadding: 4,
-            barBottomMargin: 0,
-            onButtonClick: async () => {
-              if (this.symbolOn) {
-                await this.adjustMinSymbols(-1);
-              }
+        Row({ space: this.activeSplitView ? 8 : 4 }) {
+          this.StepperAction($r('app.media.icon_minus'),
+            $r('app.string.accessibility_decrease_min_symbols'), async () => {
+            if (this.symbolOn) {
+              await this.adjustMinSymbols(-1);
             }
-          })
+            })
           Text(`${this.minSymbols}`)
-            .fontSize(16)
+            .fontSize(this.activeSplitView ? 16 : 15)
             .fontWeight(FontWeight.Medium)
             .textAlign(TextAlign.Center)
-            .width(40)
+            .width(this.activeSplitView ? 40 : 32)
             .opacity(this.symbolOn ? 1 : 0.4)
-          AdaptiveIconButton({
-            icon: $r('app.media.icon_add'),
-            accessibilityLabel: $r('app.string.accessibility_increase_min_symbols'),
-            barWidth: 36,
-            barHeight: 36,
-            iconWidth: 16,
-            iconHeight: 16,
-            contentPadding: 4,
-            barBottomMargin: 0,
-            onButtonClick: async () => {
-              if (this.symbolOn) {
-                await this.adjustMinSymbols(1);
-              }
+          this.StepperAction($r('app.media.icon_add'),
+            $r('app.string.accessibility_increase_min_symbols'), async () => {
+            if (this.symbolOn) {
+              await this.adjustMinSymbols(1);
             }
-          })
+            })
         }
         .opacity(this.symbolOn ? 1 : 0.4)
       }
       .width('100%')
-      .padding({ top: 8, bottom: 8 })
+      .constraintSize({ minHeight: this.activeSplitView ? 0 : 60 })
+      .padding({
+        left: this.activeSplitView ? 0 : 16,
+        right: this.activeSplitView ? 0 : 12,
+        top: this.activeSplitView ? 8 : 6,
+        bottom: this.activeSplitView ? 8 : 6
+      })
+      .backgroundColor(this.activeSplitView ? Color.Transparent : $r('app.color.vault_list_background'))
+      .borderRadius({ bottomLeft: this.activeSplitView ? 0 : 16, bottomRight: this.activeSplitView ? 0 : 16 })
 
       // 底部避让
       Row()
@@ -504,16 +609,17 @@ export struct GeneratorPage {
         .height(this.bottomContentInset)
     }
     .width('100%')
-    .padding({ left: 8, right: 20, top: 8, bottom: 16 })
+    .padding({ left: this.activeSplitView ? 8 : 0, right: this.activeSplitView ? 20 : 0,
+      top: this.activeSplitView ? 8 : 0, bottom: 16 })
   }
 
   @Builder
   UsernameControls() {
-    Column({ space: 16 }) {
+    Column({ space: this.activeSplitView ? 16 : 0 }) {
       // 类型下拉
       Column({ space: 8 }) {
         Text($r('app.string.username_type'))
-          .fontSize(14)
+          .fontSize(this.activeSplitView ? 14 : 13)
           .fontColor($r('app.color.vault_secondary_text'))
           .width('100%')
         AppDropdown({
@@ -527,19 +633,22 @@ export struct GeneratorPage {
         })
       }
       .width('100%')
+      .padding(this.activeSplitView ? 0 : 16)
+      .borderRadius(this.activeSplitView ? 0 : 16)
+      .backgroundColor(this.activeSplitView ? Color.Transparent : $r('app.color.vault_list_background'))
+      .margin({ bottom: this.activeSplitView ? 0 : 8 })
 
       if (this.usernameType === UsernameType.EMAIL_ALIAS) {
         Column({ space: 8 }) {
           Text($r('app.string.username_email'))
-            .fontSize(14)
+            .fontSize(this.activeSplitView ? 14 : 13)
             .fontColor($r('app.color.vault_secondary_text'))
             .width('100%')
           TextInput({ text: this.email, placeholder: $r('app.string.username_email_placeholder') })
             .accessibilityText($r('app.string.username_email'))
             .type(InputType.Email)
-            .fontSize(16)
+            .fontSize(this.activeSplitView ? 16 : 15)
             .height(48)
-            .accessibilityText($r('app.string.username_email'))
             .onChange((v: string) => {
               this.email = v;
             })
@@ -548,10 +657,13 @@ export struct GeneratorPage {
             })
         }
         .width('100%')
+        .padding(this.activeSplitView ? 0 : 16)
+        .borderRadius(this.activeSplitView ? 0 : 16)
+        .backgroundColor(this.activeSplitView ? Color.Transparent : $r('app.color.vault_list_background'))
       } else {
         Row() {
           Text($r('app.string.username_capitalize'))
-            .fontSize(16)
+            .fontSize(this.activeSplitView ? 16 : 15)
             .layoutWeight(1)
           Toggle({ type: ToggleType.Switch, isOn: this.capitalize })
             .selectedColor($r('app.color.brand_accent_color'))
@@ -562,11 +674,14 @@ export struct GeneratorPage {
             })
         }
         .width('100%')
-        .padding({ top: 8, bottom: 8 })
+        .constraintSize({ minHeight: this.activeSplitView ? 0 : 60 })
+        .padding({ left: this.activeSplitView ? 0 : 16, right: this.activeSplitView ? 0 : 12, top: 8, bottom: 8 })
+        .backgroundColor(this.activeSplitView ? Color.Transparent : $r('app.color.vault_list_background'))
+        .borderRadius({ topLeft: this.activeSplitView ? 0 : 16, topRight: this.activeSplitView ? 0 : 16 })
 
         Row() {
           Text($r('app.string.username_include_number'))
-            .fontSize(16)
+            .fontSize(this.activeSplitView ? 16 : 15)
             .layoutWeight(1)
           Toggle({ type: ToggleType.Switch, isOn: this.includeNumber })
             .selectedColor($r('app.color.brand_accent_color'))
@@ -577,7 +692,10 @@ export struct GeneratorPage {
             })
         }
         .width('100%')
-        .padding({ top: 8, bottom: 8 })
+        .constraintSize({ minHeight: this.activeSplitView ? 0 : 60 })
+        .padding({ left: this.activeSplitView ? 0 : 16, right: this.activeSplitView ? 0 : 12, top: 8, bottom: 8 })
+        .backgroundColor(this.activeSplitView ? Color.Transparent : $r('app.color.vault_list_background'))
+        .borderRadius({ bottomLeft: this.activeSplitView ? 0 : 16, bottomRight: this.activeSplitView ? 0 : 16 })
       }
 
       // 底部避让
@@ -586,6 +704,7 @@ export struct GeneratorPage {
         .height(this.bottomContentInset)
     }
     .width('100%')
-    .padding({ left: 8, right: 20, top: 8, bottom: 16 })
+    .padding({ left: this.activeSplitView ? 8 : 0, right: this.activeSplitView ? 20 : 0,
+      top: this.activeSplitView ? 8 : 0, bottom: 16 })
   }
 }

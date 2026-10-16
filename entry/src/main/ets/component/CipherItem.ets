@@ -15,6 +15,9 @@ export enum CipherCopyField {
 @Component
 export struct CipherItem {
   cipher: Cipher = {} as Cipher;
+  @Prop grouped: boolean = false;
+  @Prop firstInGroup: boolean = false;
+  @Prop lastInGroup: boolean = false;
   onTap?: () => void;
   onCopyField?: (field: CipherCopyField) => void;
   onEdit?: () => void;
@@ -23,10 +26,10 @@ export struct CipherItem {
   @Builder
   CipherTypeIcon() {
     Image(this.getTypeIcon())
-      .width(22)
-      .height(22)
+      .width(24)
+      .height(24)
       .objectFit(ImageFit.Contain)
-      .margin({ right: 12 })
+      .margin({ right: 16 })
       .accessibilityLevel('no')
   }
 
@@ -128,7 +131,8 @@ export struct CipherItem {
   }
 
   build() {
-    Row() {
+    Stack({ alignContent: Alignment.Bottom }) {
+      Row() {
       Row() {
         // 类型图标
         this.CipherTypeIcon()
@@ -136,13 +140,15 @@ export struct CipherItem {
         // 内容区域
         Column() {
           Text(this.getDisplayName())
-            .fontSize(14)
-            .fontWeight(FontWeight.Medium)
+            .fontSize(15)
+            .lineHeight(20)
+            .fontWeight(FontWeight.Regular)
             .maxLines(1)
             .textOverflow({ overflow: TextOverflow.Ellipsis })
 
           Text(this.getDisplaySubtitle())
-            .fontSize(12)
+            .fontSize(13)
+            .lineHeight(18)
             .fontColor($r('app.color.vault_secondary_text'))
             .maxLines(1)
             .textOverflow({ overflow: TextOverflow.Ellipsis })
@@ -159,27 +165,40 @@ export struct CipherItem {
       })
 
       Button() {
-        Text('\u22ee')
+        Text('\u22ef')
           .fontSize(24)
           .fontWeight(FontWeight.Medium)
-          .fontColor($r('app.color.brand_accent_color'))
+          .fontColor($r('sys.color.icon_primary'))
       }
       .type(ButtonType.Circle)
       .buttonStyle(ButtonStyleMode.TEXTUAL)
-      .width(40)
-      .height(40)
+      .width(48)
+      .height(48)
       .padding(0)
       .accessibilityText($r('app.string.vault_item_menu'))
       .bindMenu(this.getMenuItems(), {
         backgroundColor: $r('app.color.menu_background_color'),
         backgroundBlurStyle: BlurStyle.NONE
       })
+      }
+      .width('100%')
+      .constraintSize({ minHeight: 60 })
+      .padding({ left: 16, right: 4, top: 6, bottom: 6 })
+      if (!this.grouped || !this.lastInGroup) {
+        Divider()
+          .color($r('app.color.vault_divider_color'))
+          .margin({ left: 56 })
+      }
     }
     .width('100%')
-    .padding({ left: 16, right: 16, top: 10, bottom: 10 })
     .backgroundColor($r('app.color.vault_list_background'))
-    .borderWidth({ bottom: 1 })
-    .borderColor($r('app.color.vault_divider_color'))
+    .borderRadius({
+      topLeft: this.grouped && this.firstInGroup ? 12 : 0,
+      topRight: this.grouped && this.firstInGroup ? 12 : 0,
+      bottomLeft: this.grouped && this.lastInGroup ? 12 : 0,
+      bottomRight: this.grouped && this.lastInGroup ? 12 : 0
+    })
+    .clip(true)
     .bindContextMenu(this.ContextMenuBuilder, ResponseType.RightClick, {
       backgroundColor: $r('app.color.menu_background_color'),
       backgroundBlurStyle: BlurStyle.NONE

@@ -394,7 +394,7 @@
     },
     {
       "name": "vault_title",
-      "value": "密码库"
+      "value": "我的密码库"
     },
     {
       "name": "vault_search_placeholder",
@@ -1323,6 +1323,30 @@
     {
       "name": "log_export_failed",
       "value": "日志导出失败，请重试"
+    },
+    {
+      "name": "login_welcome",
+      "value": "登录 Homowarden"
+    },
+    {
+      "name": "login_continue",
+      "value": "继续"
+    },
+    {
+      "name": "login_master_password",
+      "value": "主密码"
+    },
+    {
+      "name": "login_environment",
+      "value": "登录至："
+    },
+    {
+      "name": "login_account_context",
+      "value": "以 %1$s 登录 %2$s"
+    },
+    {
+      "name": "login_not_you",
+      "value": "不是您？"
     }
   ]
 }

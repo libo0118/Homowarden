@@ -78,6 +78,7 @@ export struct LoginPage {
   @State pendingEmailLogin: boolean = false;
   @State verificationSubmitting: boolean = false;
   @State feedbackVisible: boolean = false;
+  @State mobilePasswordStep: boolean = false;
   private exitTime: number = 0;
   private isPc: boolean = FormFactorUtil.isPc();
   pathInfos: NavPathStack = new NavPathStack();
@@ -161,6 +162,7 @@ export struct LoginPage {
     const queryResult = DataPreferences.getInstance().getSync<number>(SAVE_EMAIL);
     if (queryResult && queryResult == 1) {
       this.needToSaveEmail = true;
+      this.viewModel.needSaveEmail = true;
       this.loadSaveEmail();
     }
   }
@@ -306,8 +308,343 @@ export struct LoginPage {
     }
   }
 
+  @Builder
+  private mobileLandingContent() {
+    Column() {
+      Row({ space: 12 }) {
+        Image($r('app.media.app_small_icon'))
+          .width(56)
+          .height(56)
+          .accessibilityLevel('no')
+        Text('Homowarden')
+          .fontSize(32)
+          .fontWeight(FontWeight.Normal)
+          .fontColor($r('app.color.brand_accent_color'))
+      }
+      .justifyContent(FlexAlign.Center)
+      .width('100%')
+      .margin({ top: 52, bottom: 64 })
+
+      Text($r('app.string.login_welcome'))
+        .fontSize(18)
+        .lineHeight(26)
+        .fontWeight(FontWeight.Medium)
+        .fontColor($r('sys.color.font_primary'))
+        .textAlign(TextAlign.Center)
+        .width('100%')
+        .margin({ bottom: 24 })
+
+      Column() {
+        Column() {
+          Text($r('app.string.login_email'))
+            .fontSize(12)
+            .fontWeight(FontWeight.Medium)
+            .fontColor($r('app.color.vault_secondary_text'))
+            .width('100%')
+          TextInput({ text: this.viewModel.email })
+            .accessibilityText($r('app.string.login_email'))
+            .type(InputType.Email)
+            .enterKeyType(EnterKeyType.Next)
+            .fontSize(16)
+            .height(32)
+            .padding(0)
+            .borderRadius(0)
+            .backgroundColor(Color.Transparent)
+            .onChange((value: string) => {
+              this.viewModel.email = value;
+              this.viewModel.clearError();
+              this.feedbackVisible = false;
+            })
+            .onSubmit(() => {
+              this.continueToPassword();
+            })
+        }
+        .width('100%')
+        .padding({ left: 16, right: 16, top: 8, bottom: 8 })
+        .constraintSize({ minHeight: 60 })
+
+        Divider()
+          .color($r('app.color.vault_divider_color'))
+
+        Button() {
+          Row({ space: 8 }) {
+            Text($r('app.string.login_environment'))
+              .fontSize(14)
+              .fontColor($r('app.color.vault_secondary_text'))
+            Blank()
+            Text(this.getServerTypeButtonText())
+              .fontSize(14)
+              .fontWeight(FontWeight.Medium)
+              .fontColor($r('app.color.brand_accent_color'))
+            SymbolGlyph($r('sys.symbol.chevron_down'))
+              .fontSize(16)
+              .fontColor([$r('app.color.brand_accent_color')])
+          }
+          .width('100%')
+        }
+        .type(ButtonType.Normal)
+        .width('100%')
+        .height(48)
+        .padding({ left: 16, right: 16 })
+        .backgroundColor(Color.Transparent)
+        .borderRadius({ bottomLeft: 12, bottomRight: 12 })
+        .accessibilityText($r('app.string.login_select_server'))
+        .onClick(() => {
+          this.serverTypeDialogController.open();
+        })
+      }
+      .width('100%')
+      .backgroundColor($r('app.color.vault_list_background'))
+      .borderRadius(12)
+
+      if (this.viewModel.serverType === ServerType.SELF_HOSTED) {
+        Row({ space: 8 }) {
+          Text('https://')
+            .fontSize(16)
+            .fontColor($r('app.color.vault_secondary_text'))
+          TextInput({
+            placeholder: $r('app.string.login_domain_placeholder'),
+            text: this.viewModel.serverAddress
+          })
+            .accessibilityText($r('app.string.login_select_server'))
+            .type(InputType.URL)
+            .fontSize(16)
+            .height(48)
+            .padding(0)
+            .backgroundColor(Color.Transparent)
+            .layoutWeight(1)
+            .onChange((value: string) => {
+              this.viewModel.serverAddress = value;
+              this.viewModel.clearError();
+              this.feedbackVisible = false;
+            })
+        }
+        .width('100%')
+        .padding({ left: 16, right: 16 })
+        .backgroundColor($r('app.color.vault_list_background'))
+        .borderRadius(12)
+        .margin({ top: 8 })
+      }
+
+      Row({ space: 16 }) {
+        Text($r('app.string.login_remember_email'))
+          .fontSize(16)
+          .fontColor($r('sys.color.font_primary'))
+          .layoutWeight(1)
+        Toggle({ type: ToggleType.Switch, isOn: this.needToSaveEmail })
+          .width(52)
+          .height(32)
+          .selectedColor($r('app.color.brand_accent_color'))
+          .onChange((isOn: boolean) => {
+            this.needToSaveEmail = isOn;
+            this.viewModel.needSaveEmail = isOn;
+            DataPreferences.getInstance().putSync(SAVE_EMAIL, isOn ? 1 : 0);
+          })
+          .accessibilityText($r('app.string.login_remember_email'))
+      }
+      .width('100%')
+      .constraintSize({ minHeight: 56 })
+      .padding({ left: 16, right: 16, top: 12, bottom: 12 })
+      .backgroundColor($r('app.color.vault_list_background'))
+      .borderRadius(12)
+      .margin({ top: 8, bottom: 24 })
+
+      Button($r('app.string.login_continue'))
+        .type(ButtonType.Normal)
+        .width('100%')
+        .height(48)
+        .borderRadius(24)
+        .fontSize(14)
+        .fontWeight(FontWeight.Medium)
+        .fontColor($r('app.color.button_foreground_color'))
+        .backgroundColor($r('app.color.button_background_color'))
+        .enabled(this.viewModel.email.trim().length > 0)
+        .onClick(() => {
+          this.continueToPassword();
+        })
+    }
+    .width('100%')
+    .padding({ left: 16, right: 16, top: 12, bottom: 24 })
+  }
+
+  @Builder
+  private mobilePasswordContent() {
+    Column() {
+      Column() {
+        Text($r('app.string.login_master_password'))
+          .fontSize(12)
+          .fontWeight(FontWeight.Medium)
+          .fontColor($r('app.color.vault_secondary_text'))
+          .width('100%')
+        TextInput({ text: this.viewModel.password })
+          .accessibilityText($r('app.string.login_master_password'))
+          .type(InputType.Password)
+          .enterKeyType(EnterKeyType.Go)
+          .fontSize(16)
+          .height(36)
+          .padding(0)
+          .borderRadius(0)
+          .backgroundColor(Color.Transparent)
+          .enabled(!this.isLoading)
+          .onChange((value: string) => {
+            this.viewModel.password = value;
+            this.viewModel.clearError();
+            this.feedbackVisible = false;
+          })
+          .onSubmit(async () => {
+            await this.handleLogin();
+          })
+      }
+      .width('100%')
+      .padding({ left: 16, right: 16, top: 8, bottom: 8 })
+      .constraintSize({ minHeight: 60 })
+      .backgroundColor($r('app.color.vault_list_background'))
+      .borderRadius(12)
+
+      Button(this.isLoading ? $r('app.string.login_in_progress') : $r('app.string.login_action'))
+        .type(ButtonType.Normal)
+        .width('100%')
+        .height(48)
+        .borderRadius(24)
+        .fontSize(14)
+        .fontWeight(FontWeight.Medium)
+        .fontColor($r('app.color.button_foreground_color'))
+        .backgroundColor($r('app.color.button_background_color'))
+        .margin({ top: 24 })
+        .enabled(!this.isLoading && this.viewModel.password.length > 0)
+        .onClick(() => {
+          void this.handleLogin();
+        })
+
+      Text($r('app.string.login_account_context', this.viewModel.email.trim(), this.getSelectedServerAddress()))
+        .fontSize(12)
+        .lineHeight(16)
+        .fontColor($r('app.color.vault_secondary_text'))
+        .textAlign(TextAlign.Center)
+        .width('100%')
+        .margin({ top: 24 })
+      Button($r('app.string.login_not_you'))
+        .type(ButtonType.Normal)
+        .height(48)
+        .padding({ left: 16, right: 16 })
+        .fontSize(12)
+        .fontWeight(FontWeight.Medium)
+        .backgroundColor(Color.Transparent)
+        .fontColor($r('app.color.brand_accent_color'))
+        .enabled(!this.isLoading)
+        .onClick(() => {
+          this.returnToEmail();
+        })
+
+      if (this.viewModel.errorMessage) {
+        Text(AppTextResolver.resource(this.viewModel.errorMessage))
+          .fontSize(14)
+          .fontColor(Color.Red)
+          .width('100%')
+          .margin({ top: 12 })
+        if (this.feedbackVisible) {
+          this.feedbackEntry()
+        }
+      }
+      if (this.viewModel.successMessage) {
+        Text(AppTextResolver.resource(this.viewModel.successMessage))
+          .fontSize(14)
+          .fontColor(Color.Green)
+          .width('100%')
+          .margin({ top: 12 })
+      }
+    }
+    .width('100%')
+    .padding({ left: 16, right: 16, top: 12, bottom: 24 })
+  }
+
+  @Builder
+  private mobileContent() {
+    Column() {
+      if (this.mobilePasswordStep) {
+        Row({ space: 16 }) {
+          Button() {
+            Image($r('app.media.icon_cancel'))
+              .width(24)
+              .height(24)
+              .fillColor($r('sys.color.font_primary'))
+          }
+          .type(ButtonType.Normal)
+          .width(48)
+          .height(48)
+          .padding(12)
+          .borderRadius(24)
+          .backgroundColor(Color.Transparent)
+          .accessibilityText($r('app.string.common_cancel'))
+          .enabled(!this.isLoading)
+          .onClick(() => {
+            this.returnToEmail();
+          })
+          Text('Homowarden')
+            .fontSize(19)
+            .fontWeight(FontWeight.Medium)
+            .fontColor($r('sys.color.font_primary'))
+            .layoutWeight(1)
+        }
+        .height(48)
+        .width('100%')
+        .padding({ left: 4, right: 16 })
+      }
+
+      Scroll() {
+        Column() {
+          if (this.mobilePasswordStep) {
+            this.mobilePasswordContent()
+          } else {
+            this.mobileLandingContent()
+          }
+        }
+        .width('100%')
+      }
+      .width('100%')
+      .layoutWeight(1)
+      .scrollBar(BarState.Off)
+    }
+    .width('100%')
+    .height('100%')
+    .backgroundColor($r('app.color.start_window_background'))
+  }
+
+  private continueToPassword(): void {
+    if (this.viewModel.email.trim().length === 0) {
+      AppToast.show(this.getUIContext(), $r('app.string.login_error_email_required'));
+      return;
+    }
+    if (this.viewModel.serverType === ServerType.SELF_HOSTED &&
+      this.viewModel.serverAddress.trim().length === 0) {
+      AppToast.show(this.getUIContext(), $r('app.string.login_error_server_required'));
+      return;
+    }
+    this.viewModel.clearError();
+    this.feedbackVisible = false;
+    this.mobilePasswordStep = true;
+    this.getUIContext().getFocusController().clearFocus();
+  }
+
+  private returnToEmail(): void {
+    this.mobilePasswordStep = false;
+    this.viewModel.password = '';
+    this.viewModel.clearError();
+    this.feedbackVisible = false;
+    this.exitTime = 0;
+    this.getUIContext().getFocusController().clearFocus();
+  }
+
+  private getSelectedServerAddress(): string {
+    if (this.viewModel.serverType === ServerType.SELF_HOSTED) {
+      return 'https://' + this.viewModel.serverAddress;
+    }
+    return this.viewModel.serverType === ServerType.EU ? 'bitwarden.eu' : 'bitwarden.com';
+  }
+
   build() {
     HdsNavDestination() {
+      if (this.isPc) {
       Column() {
         Column() {
         Text('Homowarden')
@@ -445,6 +782,9 @@ export struct LoginPage {
       .alignItems(HorizontalAlign.Center)
       .justifyContent(FlexAlign.Center)
       .backgroundColor($r('app.color.start_window_background'))
+      } else {
+        this.mobileContent()
+      }
     }
     .titleBar({
       content: {
@@ -454,12 +794,18 @@ export struct LoginPage {
       },
       enableComponentSafeArea: true
     })
-    .hideTitleBar(this.isPc)
+    .hideTitleBar(true)
     .hideBackButton(true)
     .onReady((ctx: NavDestinationContext) => {
       this.pathInfos = ctx.pathStack;
     })
     .onBackPressed(() => {
+      if (!this.isPc && this.mobilePasswordStep) {
+        if (!this.isLoading) {
+          this.returnToEmail();
+        }
+        return true;
+      }
       const currentTime = new Date().getTime();
       if (currentTime - this.exitTime < 2000) {
         (this.getUIContext().getHostContext() as common.UIAbilityContext)?.terminateSelf();
