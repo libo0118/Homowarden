@@ -35,6 +35,7 @@ export class VaultViewModel {
   private static syncGeneration: number = 0;
   private static syncBlocked: boolean = false;
   private static sessionActive: boolean = false;
+  private static autoBiometricPromptAttempted: boolean = false;
   // 所有密码项
   allCiphers: Cipher[] = [];
   // 筛选后的密码项
@@ -140,6 +141,7 @@ export class VaultViewModel {
     VaultViewModel.sessionActive = true;
     VaultViewModel.syncBlocked = false;
     VaultViewModel.syncGeneration++;
+    VaultViewModel.autoBiometricPromptAttempted = false;
     AutoLockUtil.recordActivity();
   }
 
@@ -149,6 +151,15 @@ export class VaultViewModel {
 
   static isSessionActive(): boolean {
     return VaultViewModel.sessionActive;
+  }
+
+  static consumeAutoBiometricPrompt(): boolean {
+    if (VaultViewModel.sessionActive || VaultViewModel.autoBiometricPromptAttempted) {
+      return false;
+    }
+    // 取消后保持本次锁定已尝试，前后台切换或页面重建不能再次自动弹出。
+    VaultViewModel.autoBiometricPromptAttempted = true;
+    return true;
   }
 
   private async performSyncCiphersFromServer(generation: number): Promise<boolean> {

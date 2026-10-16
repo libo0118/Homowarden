@@ -341,6 +341,26 @@
       "value": "自托管"
     },
     {
+      "name": "unlock_verify_title",
+      "value": "验证主密码"
+    },
+    {
+      "name": "unlock_vault_locked_description",
+      "value": "您的密码库已锁定，请验证您的主密码以继续。"
+    },
+    {
+      "name": "unlock_account_context",
+      "value": "已在 %2$s 上以 %1$s 身份登录。"
+    },
+    {
+      "name": "unlock_action",
+      "value": "解锁"
+    },
+    {
+      "name": "unlock_use_biometrics",
+      "value": "使用生物识别解锁"
+    },
+    {
       "name": "unlock_locked_prompt",
       "value": "密码库已锁定，请输入主密码"
     },

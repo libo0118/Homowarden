@@ -376,9 +376,11 @@ export struct LoginPage {
               .fontSize(14)
               .fontWeight(FontWeight.Medium)
               .fontColor($r('app.color.brand_accent_color'))
-            SymbolGlyph($r('sys.symbol.chevron_down'))
-              .fontSize(16)
-              .fontColor([$r('app.color.brand_accent_color')])
+            Image($r('app.media.icon_chevron_down'))
+              .width(16)
+              .height(16)
+              .fillColor($r('app.color.brand_accent_color'))
+              .accessibilityLevel('no')
           }
           .width('100%')
         }

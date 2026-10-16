@@ -1,4 +1,2 @@
-<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24">
-  <path fill="#96A3BB" d="M12.5 1.5A10.5 10.5 0 1 1 2.04 13.42l1.73-.24A8.75 8.75 0 1 0 5.3 7H8v1.75H2V2.5h1.75v3.4A10.46 10.46 0 0 1 12.5 1.5Z"/>
-  <path fill="#96A3BB" d="M11.625 6h1.75v5.48l3.74 2.24-.9 1.5-4.59-2.75V6Z"/>
-</svg>
+<!-- Google Material Icons, Apache-2.0. Theme color and dimensions adapted for Homowarden; see third_party/material-icons/NOTICE.md. -->
+<svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 0 24 24" width="24" fill="#96A3BB"><path d="M0 0h24v24H0V0z" fill="none" /><path d="M13 3c-4.97 0-9 4.03-9 9H1l3.89 3.89.07.14L9 12H6c0-3.87 3.13-7 7-7s7 3.13 7 7-3.13 7-7 7c-1.93 0-3.68-.79-4.94-2.06l-1.42 1.42C8.27 19.99 10.51 21 13 21c4.97 0 9-4.03 9-9s-4.03-9-9-9zm-1 5v5l4.25 2.52.77-1.28-3.52-2.09V8z" /></svg>

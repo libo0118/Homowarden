@@ -1,8 +1,2 @@
-<?xml version="1.0" standalone="no"?><!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN"
-        "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
-<svg t="1754383753540" class="icon" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" p-id="4479"
-     data-darkreader-inline-fill="" width="200" height="200">
-    <path d="M544.256 480.256h307.2a32.256 32.256 0 0 1 0 64h-307.2v307.2a32.256 32.256 0 0 1-64 0v-307.2h-307.2a32.256 32.256 0 1 1 0-64h307.2v-307.2a32.256 32.256 0 1 1 64 0z"
-          fill="#EAEAEA" p-id="4480" data-darkreader-inline-fill=""
-          style="--darkreader-inline-fill: var(--darkreader-background-dbdbdb, #2c3032);"></path>
-</svg>
+<!-- Google Material Icons, Apache-2.0. Theme color and dimensions adapted for Homowarden; see third_party/material-icons/NOTICE.md. -->
+<svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 0 24 24" width="24" fill="#96A3BB"><path d="M0 0h24v24H0V0z" fill="none" /><path d="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z" /></svg>

@@ -1135,7 +1135,10 @@ export struct VaultPage {
     Row() {
       if (this.selectedMainTab === MainTab.TOTP) {
         Button() {
-          Text('‹').fontSize(32).fontColor($r('sys.color.icon_primary'))
+          Image($r('app.media.icon_back'))
+            .width(24).height(24)
+            .fillColor($r('app.color.settings_icon_color'))
+            .accessibilityLevel('no')
         }
         .width(48).height(48)
         .padding(0)
@@ -1150,7 +1153,10 @@ export struct VaultPage {
         })
       } else if (this.selectedMainTab === MainTab.SETTINGS && this.settingsPanel !== 0) {
         Button() {
-          Text('‹').fontSize(32).fontColor($r('sys.color.icon_primary'))
+          Image($r('app.media.icon_back'))
+            .width(24).height(24)
+            .fillColor($r('app.color.settings_icon_color'))
+            .accessibilityLevel('no')
         }
         .width(48).height(48)
         .padding(0)
@@ -1160,7 +1166,10 @@ export struct VaultPage {
       } else if (this.selectedMainTab === MainTab.VAULT &&
         (this.showVaultSearch || this.vaultFilterType !== FilterType.ALL)) {
         Button() {
-          Text('‹').fontSize(32).fontColor($r('sys.color.icon_primary'))
+          Image($r('app.media.icon_back'))
+            .width(24).height(24)
+            .fillColor($r('app.color.settings_icon_color'))
+            .accessibilityLevel('no')
         }
         .width(48).height(48)
         .padding(0)
@@ -1209,7 +1218,10 @@ export struct VaultPage {
           })
         }
         Button() {
-          Text('\u22ee').fontSize(24).fontColor($r('sys.color.icon_primary'))
+          Image($r('app.media.icon_more'))
+            .width(24).height(24)
+            .fillColor($r('app.color.settings_icon_color'))
+            .accessibilityLevel('no')
         }
         .width(48).height(48)
         .padding(0)
@@ -1231,7 +1243,10 @@ export struct VaultPage {
           .onClick(() => { this.showTotpSearch = true; })
         }
         Button() {
-          Text('\u22ee').fontSize(24).fontColor($r('sys.color.icon_primary'))
+          Image($r('app.media.icon_more'))
+            .width(24).height(24)
+            .fillColor($r('app.color.settings_icon_color'))
+            .accessibilityLevel('no')
         }
         .width(48).height(48)
         .padding(0)

@@ -1,6 +1,2 @@
-<svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-  <g fill="none" stroke="#3D4148" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
-    <rect x="2.75" y="5" width="18.5" height="14" rx="2.5"/>
-    <path d="M2.75 9h18.5M6.25 14.75h4M6.25 17h6.5"/>
-  </g>
-</svg>
+<!-- Google Material Icons, Apache-2.0. Theme color and dimensions adapted for Homowarden; see third_party/material-icons/NOTICE.md. -->
+<svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 0 24 24" width="24" fill="#5A6D91"><path d="M0 0h24v24H0V0z" fill="none" /><path d="M20 4H4c-1.11 0-1.99.89-1.99 2L2 18c0 1.11.89 2 2 2h16c1.11 0 2-.89 2-2V6c0-1.11-.89-2-2-2zm0 14H4v-6h16v6zm0-10H4V6h16v2z" /></svg>
