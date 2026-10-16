@@ -1,5 +1,1 @@
-<!-- Original Homowarden safe-door icon, MIT. Independently drawn from basic square and circular dial geometry. -->
-<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="#96A3BB">
-  <path fill-rule="evenodd" d="M5 2h14a3 3 0 0 1 3 3v14a3 3 0 0 1-3 3H5a3 3 0 0 1-3-3V5a3 3 0 0 1 3-3Zm0 2a1 1 0 0 0-1 1v14a1 1 0 0 0 1 1h14a1 1 0 0 0 1-1V5a1 1 0 0 0-1-1H5Zm7 3a5 5 0 1 0 0 10 5 5 0 0 0 0-10Zm0 2a3 3 0 1 1 0 6 3 3 0 0 1 0-6Z"/>
-  <path d="M11 7h2v4h-2zM11 13h2v4h-2zM7 11h4v2H7zM13 11h4v2h-4z"/>
-</svg>
+<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"><path fill="#96A3BB" fill-rule="evenodd" d="M6 3h12a3 3 0 0 1 3 3v12a3 3 0 0 1 -3 3h-12a3 3 0 0 1 -3 -3v-12a3 3 0 0 1 3 -3ZM6 4.8h12a1.2 1.2 0 0 1 1.2 1.2v12a1.2 1.2 0 0 1 -1.2 1.2h-12a1.2 1.2 0 0 1 -1.2 -1.2v-12a1.2 1.2 0 0 1 1.2 -1.2Z"/><path fill="#96A3BB" fill-rule="evenodd" d="M8.9 4.2L8.9 19.8a0.9 0.9 0 0 1 -1.8 0L7.1 4.2a0.9 0.9 0 0 1 1.8 0Z"/><path fill="#96A3BB" fill-rule="evenodd" d="M10.9 12a3.3 3.3 0 1 0 6.6 0a3.3 3.3 0 1 0 -6.6 0ZM12.7 12a1.5 1.5 0 1 0 3 0a1.5 1.5 0 1 0 -3 0Z"/><path fill="#96A3BB" fill-rule="evenodd" d="M13.55 12a0.65 0.65 0 1 0 1.3 0a0.65 0.65 0 1 0 -1.3 0Z"/><path fill="#96A3BB" fill-rule="evenodd" d="M16.8 11.2L18.2 11.2a0.8 0.8 0 0 1 0 1.6L16.8 12.8a0.8 0.8 0 0 1 0 -1.6Z"/></svg>

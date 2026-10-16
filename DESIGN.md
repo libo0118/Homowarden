@@ -22,7 +22,7 @@ Use blue for actions and navigation. Reserve red, green, and yellow for actual s
 - The selected navigation item uses a full background and stronger text. Avoid left accent bars.
 - Mobile root pages use a 56 vp top bar with a 28 fp semibold title; the second login step uses a 48 vp bar with a 19 fp title. The login landing title is 18 fp.
 - Vault type and item rows have a 60 vp minimum, 24 vp icons, 16 vp horizontal inset, and 15 fp primary text; item subtitles are 13 fp and type counts 12 fp. Type rows are grouped in a white rounded surface.
-- Settings root uses 60 vp push rows with 24 vp leading icons and 16 vp chevrons. Security and About use lock and information glyph roles; account, share, and history use the same Material Icons Outlined family and theme colors.
+- Settings root uses 60 vp push rows with 24 vp leading icons and 16 vp chevrons. Security and About use lock and information glyph roles; account, share, and history use the same OpenDesign icon family and theme colors.
 - Mobile Settings detail pages use 60 vp minimum rows, 12 fp labels and helper text, 15 fp values and actions, and 16 vp horizontal card insets. Security, Account, About, Share, and Share History keep this same form rhythm and retain their existing actions.
 - Generator modes sit in a separate utility row with 16 vp horizontal and 4/8 vp vertical inset. The result is a read-only field with 48 vp generate and copy targets; option rows use 15 fp text.
 - Detail fields use 12 fp labels, 16 fp values, and 48 vp inputs. Homowarden retains its TOTP tab and its existing Password/Username generator modes; sharing remains under Settings.
@@ -32,8 +32,10 @@ Use blue for actions and navigation. Reserve red, green, and yellow for actual s
 
 ## Icons and attribution
 
-The interface uses 39 icon resource names in matching light and dark variants (78 SVG files). Of these, 38 use Google Material Icons Outlined 24 px geometry; the selected favorite uses the family's filled star. Material vector paths are preserved, with only root dimensions and theme colors adapted. The vault safe-door icon is original Homowarden artwork under the project's MIT license.
+The interface uses 39 icon resource names in matching light and dark variants (78 SVG files), designed for Homowarden in the OpenDesign project `homowarden-mobile-icons-20261016` (Homowarden · 手机图标重设计). The family uses a 24 px canvas, rounded silhouettes, consistent optical weight, and open counters for small mobile controls. Light glyphs use `#5A6D91`; dark glyphs use `#96A3BB`. Resource names and control hit targets stay unchanged.
 
-These icons match the reference's visual roles without incorporating Bitwarden-owned vector paths, logos, or wordmarks. The complete upstream file mapping and Apache-2.0 license are in [`third_party/material-icons/NOTICE.md`](third_party/material-icons/NOTICE.md) and [`LICENSE`](third_party/material-icons/LICENSE), pinned to Material Icons commit `49d4db35df873165d6bd6ba09b063c7dafbac2f4`. Identical notice and license copies live in `entry/src/main/resources/rawfile/third_party/material_icons/` for inclusion in the HAP's raw resources.
+These Homowarden resources are included under the project's MIT license. They replace the previous Material icon geometry and do not incorporate Bitwarden-owned vector paths, logos, or wordmarks. Application branding and tray artwork are maintained separately.
+
+Icons contain visible filled paths with `fill-rule="evenodd"` for counters. Avoid transparent canvas paths, icon fonts, masks, filters, and external assets: native HarmonyOS tinting previously exposed a transparent canvas as a solid square. `scripts/check-svg-icons.py` checks transparent canvas hazards and light/dark pairing. Resource compilation confirms that the SVGs are accepted, but even-odd counters and tint rendering still require device-level verification.
 
 Keep search, filter, copy, edit, vault locking, error states, and accessibility labels intact. Do not reuse Bitwarden logos or wordmarks. The unsigned HAP build validates ArkTS compilation; it does not establish pixel-level parity on a device.

@@ -1,2 +1,1 @@
-<!-- Google Material Icons, Apache-2.0. Theme color and dimensions adapted for Homowarden; see third_party/material-icons/NOTICE.md. -->
-<svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 0 24 24" width="24" fill="#5A6D91"><path d="M16.59 8.59L12 13.17 7.41 8.59 6 10l6 6 6-6-1.41-1.41z" /></svg>
+<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"><path fill="#5A6D91" fill-rule="evenodd" d="M6.1364 8.1636L12.6364 14.6636a0.9 0.9 0 0 1 -1.2728 1.2728L4.8636 9.4364a0.9 0.9 0 0 1 1.2728 -1.2728Z"/><path fill="#5A6D91" fill-rule="evenodd" d="M11.3636 14.6636L17.8636 8.1636a0.9 0.9 0 0 1 1.2728 1.2728L12.6364 15.9364a0.9 0.9 0 0 1 -1.2728 -1.2728Z"/></svg>
