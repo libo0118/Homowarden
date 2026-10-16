@@ -128,7 +128,7 @@ export struct SettingsPage {
   }
 
   @Builder
-  private settingsPushRow(label: ResourceStr, icon: Resource, action: () => void) {
+  private settingsPushRow(label: Resource, icon: Resource, action: () => void) {
     Row() {
       Image(icon)
         .width(24)

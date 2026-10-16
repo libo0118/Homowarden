@@ -243,15 +243,27 @@ export struct GeneratorPage {
     Column() {
       // 分段切换：密码 / 用户名
       Column() {
-        SegmentButton({
-          options: this.activeSplitView ? this.subTabOptions : this.mobileSubTabOptions,
-          selectedIndexes: $activeSubTabIndexes,
-          onItemClicked: async (index: number) => {
-            this.activeSubTabIndexes = [index];
-            await this.regenerate();
-          },
-          enableStateAnimation: true
-        })
+        if (this.activeSplitView) {
+          SegmentButton({
+            options: this.subTabOptions,
+            selectedIndexes: $activeSubTabIndexes,
+            onItemClicked: async (index: number) => {
+              this.activeSubTabIndexes = [index];
+              await this.regenerate();
+            },
+            enableStateAnimation: true
+          })
+        } else {
+          SegmentButton({
+            options: this.mobileSubTabOptions,
+            selectedIndexes: $activeSubTabIndexes,
+            onItemClicked: async (index: number) => {
+              this.activeSubTabIndexes = [index];
+              await this.regenerate();
+            },
+            enableStateAnimation: true
+          })
+        }
       }
       .width('100%')
       .padding({

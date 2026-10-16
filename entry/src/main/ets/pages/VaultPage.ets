@@ -504,7 +504,6 @@ struct VaultContent {
                 placeholder: $r('app.string.vault_search_placeholder'),
               })
                 .height(48)
-                .fontSize(15)
                 .onChange((value: string) => {
                   this.searchText = value;
                   this.applyCurrentFilter();
